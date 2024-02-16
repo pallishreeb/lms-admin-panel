@@ -50,11 +50,11 @@
                             <td class="px-6 py-4 whitespace-no-wrap">{{ $course->isPublished ? 'Yes' : 'No' }}</td>
                             <td class="px-6 py-4 whitespace-no-wrap">{{ $course->isFree ? 'Yes' : 'No' }}</td>
                             <td class="px-6 py-4 whitespace-no-wrap">
-                                <a href="{{ route('courses.edit', ['course' => $course->id]) }}" class="text-yellow-500 hover:underline mr-2">Edit</a>
+                                <a href="{{ route('courses.edit', ['course' => $course->id]) }}" class="text-yellow-500 hover:underline mr-2"><i class="fas fa-edit"></i>Edit</a>
                                 <form action="{{ route('courses.destroy', ['course' => $course->id]) }}" method="post" class="inline" onsubmit="return confirmDelete(event)">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:underline">Delete</button>
+                                    <button type="submit" class="text-red-500 hover:underline"><i class="fas fa-trash"></i>Delete</button>
                                 </form>
                             </td>
                         </tr>

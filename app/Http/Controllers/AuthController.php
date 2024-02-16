@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Role;
 use App\Mail\OtpMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -173,25 +172,7 @@ public function index(Request $request)
 
     return view('users.index', ['users' => $users]);
 }
- public function edit(User $user)
-{
-  // Fetch the user roles from your role management system
-  $roles = Role::all(); // Assuming Role is a model for managing roles
 
-  return view('users.edit', compact('user', 'roles'));
-}
-
-public function update(Request $request, $id)
-{
-// Update user record
-  $user = User::find($id);
-  $user->update([
-      'role' => $request->input('role'),
-      // Add other fields to update if needed
-  ]);
-
-  return redirect()->route('users.edit', $user->id)->with('success', 'User updated successfully!');
-}
 public function deleteConfirmation(User $user)
 {
   return view('users.delete-confirmation', [
@@ -207,4 +188,30 @@ public function destroy(User $user)
 
   return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
 }
+  // Display the form for editing the specified user.
+    public function editUser(User $user)
+    {
+        return view('users.edit', compact('user'));
+    }
+
+    // Update the specified user in storage.
+    public function updateUser(Request $request, User $user)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:6',
+            'mobile_number' => 'nullable|string|max:15',
+            'address' => 'nullable|string|max:255',
+        ]);
+
+        $data = $request->only(['name', 'email', 'mobile_number', 'address']);
+        if ($request->filled('password')) {
+            $data['password'] = bcrypt($request->password);
+        }
+
+        $user->update($data);
+
+        return redirect()->route('users.edit-user', $user->id)->with('success', 'User updated successfully.');
+    }
 }

@@ -55,8 +55,8 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-no-wrap">
-                        <!-- <a href="{{ route('users.edit', $user->id) }}" class="text-blue-500 hover:underline">
-                        <i class="fas fa-edit"></i>Edit</a> -->
+                        <a href="{{ route('users.edit-user', $user->id) }}" class="text-yellow-500 hover:underline">
+                        <i class="fas fa-edit"></i>Edit</a>
 
                         <form action="{{ route('users.destroy', ['user' => $user->id]) }}" method="post" class="inline" onsubmit="return confirmDelete(event)">
                                     @csrf

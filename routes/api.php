@@ -35,6 +35,9 @@ Route::post('/profile/update-profile',[ProfileController::class,'update_profile'
 
 Route::get('/categories', [CategoryController::class, 'allCategories']);
 Route::get('/books', [BookController::class, 'getBooks']);
+Route::get('/pdf-url/{id}', [BookController::class, 'getPdfBook']);
+Route::post('/pdf-url/{id}', [BookController::class, 'updatePdfBook']);
+Route::get('/fetch-image', [BookController::class, 'fetchImage']);
 Route::get('/courses', [CourseController::class, 'getCourses']);
 Route::get('/course-chapters/{id}', [CourseController::class, 'getCourseChapters']);
 Route::group(['prefix' => 'chat'], function () {

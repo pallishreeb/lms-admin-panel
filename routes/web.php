@@ -11,6 +11,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\AppConfigController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\PdfController;
 
 
 Route::get('/admin/config', [AppConfigController::class, 'index'])->name('admin.config');
@@ -71,7 +72,8 @@ Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('verify.o
 Route::get('/admin/users', [AuthController::class, 'index'])->name('admin.users.index')->middleware('auth');
 Route::get('/users/{user}/edit', [AuthController::class, 'edit'])->name('users.edit')->middleware('auth');
 Route::put('/users/{user}', [AuthController::class, 'update'])->name('users.update')->middleware('auth');
-
+Route::get('/book-user/{user}/edit', [AuthController::class, 'editUser'])->name('users.edit-user')->middleware('auth');
+Route::put('/book-user/{user}', [AuthController::class, 'updateUser'])->name('users.update-user')->middleware('auth');
 // Destroy
 Route::get('/users/delete/{user}', [AuthController::class, 'deleteConfirmation'])->name('users.delete-confirmation')->middleware('auth');
 Route::delete('/users/{user}', [AuthController::class, 'destroy'])->name('users.destroy')->middleware('auth');
@@ -106,3 +108,4 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
+Route::get('/pdf/getText/{id}', [PdfController::class, 'showPDF'])->name('books.show-pdf');
