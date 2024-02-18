@@ -80,7 +80,7 @@
             <label for="pdf_book" class="block text-sm font-medium text-gray-600">Existing PDF Book</label>
             @if($book->pdf_book)
                 <a href="{{ asset('pdf_books/' . $book->pdf_book) }}" target="_blank" class="text-blue-500 hover:underline">{{ $book->pdf_book }}</a>
-                <a href="{{ route('books.show-pdf', ['id' => $book->id]) }}" target="_blank" class="text-blue-500 hover:underline"><i class="fas fa-edit"></i>Edit</a></a>
+                <a href="{{ route('books.show-pdf', ['id' => $book->id]) }}" class="text-blue-500 hover:underline"><i class="fas fa-edit"></i>Edit</a></a>
 
             @else
                 No PDF Available

@@ -20,7 +20,7 @@ function App() {
     const [currentAnnotations, setCurrentAnnotations] = useState([]);
     const [id, setId] = useState('');
     const [imageData, setImageData] = useState(null);
-    
+    const [loading, setLoading] = useState(false);
     useEffect(() => {
         const pathname = window.location.pathname;
         const idFromPath = extractIdFromPath(pathname);
@@ -145,6 +145,7 @@ function App() {
       if (!pdfUrl) return;
     
       try {
+        setLoading(true)
         const response = await axios.get(`${api}/pdf_books/${pdfUrl}`, {
           responseType: 'arraybuffer'
         });
@@ -167,10 +168,13 @@ function App() {
         const editedPdfBytes = await pdfDoc.save();
         console.log(editedPdfBytes,pdfDoc)
         sendEditedPDFToAPI(editedPdfBytes).then(() => {
+          setLoading(false)
           // Redirect to the desired URL after successful save
          window.location.href = `${api}/admin/books/${id}/edit`;
         })
       } catch (error) {
+        setLoading(false)
+        alert('Error in Saving PDF, Please Try Again');
         console.error('Error downloading PDF:', error);
       }
     }
@@ -220,7 +224,7 @@ function App() {
           <button onClick={() => setPageNumber(pageNumber + 1)} disabled={pageNumber >= numPages} className="page-nav-button">
             Next Page
           </button>
-          <button onClick={downloadEditedPDF} className="download-button save">Save Edited PDF</button>
+          <button onClick={downloadEditedPDF} className="download-button save">{loading ? 'Submitting' : 'Save Edited PDF'} </button>
         </div>
         <div className="page-info">
           Page {pageNumber} of {numPages}

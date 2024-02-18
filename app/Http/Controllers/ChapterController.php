@@ -26,21 +26,13 @@ class ChapterController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'video' => 'required|mimetypes:video/mp4|max:102400', // Adjust max file size as needed
+            'videoUrl' => 'required|string', // Adjust max file size as needed
             'attachment' => 'nullable|mimes:pdf,doc,docx|max:102400', // Adjust max file size and allowed file types as needed
             'position' => 'required|integer',
             'isPublished' => 'required|boolean',
             'isFree' => 'required|boolean',
             'courseId' => 'required|exists:courses,id',
         ]);
-       // Upload video file and get the URL
-       $videoUrl = null;
-       if ($request->hasFile('video')) {
-           $video = $request->file('video');
-           $videoPath = 'videos/' . $video->getClientOriginalName();
-           Storage::disk('s3')->put($videoPath, file_get_contents($video));
-           $videoUrl = Storage::disk('s3')->url($videoPath);
-       }
        
        $attachmentUrl = null;
        if ($request->hasFile('attachment')) {
@@ -54,7 +46,7 @@ class ChapterController extends Controller
         $chapter = Chapter::create([
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
-            'video_url' => $videoUrl,
+            'video_url' => $validatedData['videoUrl'],
             'attachment_url' => $attachmentUrl,
             'position' => $validatedData['position'],
             'isPublished' => $validatedData['isPublished'],
@@ -93,7 +85,7 @@ class ChapterController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'video' => 'nullable|mimetypes:video/mp4|max:102400', // Adjust max file size as needed
+            'videoUrl' => 'required|string', // Adjust max file size as needed
             'attachment' => 'nullable|mimes:pdf,doc,docx|max:10240', // Adjust max file size and allowed file types as needed
             'position' => 'required|integer',
             'isPublished' => 'required|boolean',
@@ -102,14 +94,10 @@ class ChapterController extends Controller
         ]);
 
            $videoUrl = $chapter->video_url;
-                // If a new video file is provided, upload and update the URL
-                if ($request->hasFile('video')) {
-                    $video = $request->file('video');
-                    $videoPath = 'videos/' . $video->getClientOriginalName();
-                    Storage::disk('s3')->put($videoPath, file_get_contents($video));
-                    $videoUrl = Storage::disk('s3')->url($videoPath);
-                    $chapter->update(['video_url' => $videoUrl]);
-                }
+            // Check if the request has the videoUrl field with a string value
+           if ($request->filled('videoUrl') && is_string($request->videoUrl)) {
+              $videoUrl  = $request->videoUrl;
+            }
                 $attachmentUrl = $chapter->attachment_url;
                 // If a new attachment file is provided, upload and update the URL
                 if ($request->hasFile('attachment')) {
@@ -146,5 +134,23 @@ class ChapterController extends Controller
     {
         $chapter->delete();
         return redirect()->route('courses.index')->with('success', 'Chapter deleted successfully!');
+    }
+
+    public function upload(Request $request)
+    {
+        // Validate the request data, including file uploads
+        $validatedData = $request->validate([
+            'video' => 'required|mimetypes:video/mp4|max:102400', // Adjust max file size as needed
+        ]);
+       // Upload video file and get the URL
+       $videoUrl = null;
+       if ($request->hasFile('video')) {
+           $video = $request->file('video');
+           $videoPath = 'videos/' . $video->getClientOriginalName();
+           Storage::disk('s3')->put($videoPath, file_get_contents($video));
+           $videoUrl = Storage::disk('s3')->url($videoPath);
+       }
+ 
+       return response()->json(['success' => true, 'videoUrl' => $videoUrl]);
     }
 }

@@ -87,6 +87,8 @@ Route::post('/courses/chapters', [ChapterController::class, 'store'])->name('cha
 Route::get('/chapters/{chapter}/edit', [ChapterController::class, 'edit'])->name('chapters.edit')->middleware('auth');
 Route::put('/chapters/{chapter}', [ChapterController::class, 'update'])->name('chapters.update')->middleware('auth');
 Route::delete('/chapters/{chapter}', [ChapterController::class, 'destroy'])->name('chapters.destroy')->middleware('auth');
+Route::post('/upload/video', [ChapterController::class, 'upload'])->name('upload.video');
+
 // Categories
 Route::get('/admin/categories', [CategoryController::class, 'index'])->name('categories.index')->middleware('auth');
 Route::get('/admin/categories/create', [CategoryController::class, 'create'])->name('categories.create')->middleware('auth');

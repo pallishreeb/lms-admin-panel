@@ -32,7 +32,9 @@
                     <div>
                         <label for="video" class="block text-sm font-medium text-gray-700">Chapter Video:</label>
                         <input type="file" id="video" name="video" accept="video/mp4" class="mt-1 p-2 w-full border rounded-md" required>
-                        
+                        <progress id="progressBar" value="0" max="100" class="w-full" style="display: none;"></progress>
+                        <div id="loadingIndicator" style="display: none;">Uploading...</div>
+                        <input type="text" id="videoUrl" style="display: none;" name="videoUrl">
                     </div>
 
                     <!-- Attachment -->
@@ -71,5 +73,52 @@
             </form>
         </div>
     </div>
+<script>
+    document.getElementById('video').addEventListener('change', function() {
+    var progressBar = document.getElementById('progressBar');
+    progressBar.style.display = 'block'; // Show the progress bar
+    let file = this.files[0];
+    let formData = new FormData();
+    formData.append('video', file);
 
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', '{{ route("upload.video") }}', true);
+    xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+        // Show loading indicator when upload starts
+        document.getElementById('loadingIndicator').style.display = 'block';
+    xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+            let percentComplete = (e.loaded / e.total) * 100;
+            document.getElementById('progressBar').value = percentComplete;
+        }
+    };
+
+    xhr.onload = function() {
+        // Hide loading indicator when upload completes
+        document.getElementById('loadingIndicator').style.display = 'none';
+
+        if (xhr.status === 200) {
+            console.log('Upload successful');
+            let response = JSON.parse(xhr.responseText);
+            let videoUrl = response.videoUrl; // Assuming the response contains the video URL
+            document.getElementById('videoUrl').value = videoUrl;
+        } else {
+            // Error occurred during upload
+            console.error('Upload error');
+        }
+    };
+
+    xhr.onerror = function() {
+        // Hide loading indicator on upload error
+        document.getElementById('loadingIndicator').style.display = 'none';
+
+        // Handle upload errors
+        console.error('Upload error');
+    };
+
+    xhr.send(formData);
+
+});
+
+</script>
 @endsection
