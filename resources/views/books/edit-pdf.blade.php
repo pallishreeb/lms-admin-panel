@@ -2,6 +2,6 @@
 
 @section('content')
 <div id="app"></div>
-<script src="{{ asset('build/assets/app-YAS7zHfA.js') }}"></script>
+<script src="{{ asset('build/assets/app--gHUpRXk.js') }}"></script>
 
 @endsection

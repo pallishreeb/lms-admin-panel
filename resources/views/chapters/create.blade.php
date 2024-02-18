@@ -38,10 +38,10 @@
                     </div>
 
                     <!-- Attachment -->
-                    <div>
+                    <!-- <div>
                         <label for="attachment" class="block text-sm font-medium text-gray-700">Chapter Attachment:</label>
                         <input type="file" id="attachment" name="attachment" accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="mt-1 p-2 w-full border rounded-md">
-                    </div>
+                    </div> -->
 
                     <!-- Position -->
                     <div>

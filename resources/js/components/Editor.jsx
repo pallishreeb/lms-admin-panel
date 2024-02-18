@@ -21,6 +21,7 @@ function App() {
     const [id, setId] = useState('');
     const [imageData, setImageData] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [pdfLoading, setPdfLoading] = useState(false);
     useEffect(() => {
         const pathname = window.location.pathname;
         const idFromPath = extractIdFromPath(pathname);
@@ -56,13 +57,17 @@ function App() {
 
     async function fetchPdfUrl(id) {
         try {
+          setPdfLoading(true)
             const response = await axios.get(`${api}/api/pdf-url/${id}`);
             if (response.data.pdf_book) {
                 setPdfUrl(response.data.pdf_book);
+                setPdfLoading(false)
             } else {
                 console.error('PDF URL not found');
+                setPdfLoading(false)
             }
         } catch (error) {
+            setPdfLoading(false)
             console.error('Error fetching PDF URL:', error);
         }
     }
@@ -94,11 +99,7 @@ function App() {
       setNumPages(numPages);
     }
   
-    function handleFileChange(event) {
-      const file = event.target.files[0];
-      setPdfFile(file);
-    }
-  
+
     function addAnnotation() {
       if (link.trim()) {
         setAnnotations([...annotations, { link, pageNumber }]);
@@ -189,7 +190,7 @@ function App() {
             placeholder="Link URL"
             className="input-field"
           />
-          <button onClick={addAnnotation} className="add-button">Add Annotation</button>
+          <button onClick={addAnnotation} className="add-button">Add Link</button>
           <input
             type="number"
             value={pageNumber}
@@ -200,35 +201,42 @@ function App() {
           />
         </div>
         {/* Render PDF if PDF URL is available */}
-        {pdfUrl && (
-          <div className="pdf-container">
-            <Document
-              file={`${api}/pdf_books/${pdfUrl}`}
-              onLoadSuccess={onDocumentLoadSuccess}
-            >
-              <Page key={pageNumber} pageNumber={pageNumber} renderAnnotationLayer={true} width={800} height={1200} />
-            </Document>
-            <div className="annotations">
-              {currentAnnotations.map((annotation, index) => (
-                <div className="annotation" key={index}>
-                  <a href={annotation.link} target="_blank" rel="noopener noreferrer">{annotation.link}</a>
+        {pdfLoading ? <h3 className='text-center'>Loading Pdf document...</h3>  : (
+            <>
+            {pdfUrl && (
+                      <div className="pdf-container">
+                    
+                        <Document
+                          file={`${api}/pdf_books/${pdfUrl}`}
+                          onLoadSuccess={onDocumentLoadSuccess}
+                        >
+                          <Page key={pageNumber} pageNumber={pageNumber} renderAnnotationLayer={true} width={800} height={1200} />
+                        </Document>
+                        <div className="annotations">
+                          {currentAnnotations.map((annotation, index) => (
+                            <div className="annotation" key={index}>
+                              <a href={annotation.link} target="_blank" rel="noopener noreferrer">{annotation.link}</a>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  <div className="controls">
+                  <button onClick={() => setPageNumber(pageNumber - 1)} disabled={pageNumber <= 1} className="page-nav-button">
+                    Previous Page
+                  </button>
+                  <button onClick={() => setPageNumber(pageNumber + 1)} disabled={pageNumber >= numPages} className="page-nav-button">
+                    Next Page
+                  </button>
+                  <button onClick={downloadEditedPDF} className="download-button save">{loading ? 'Saving...' : 'Save Edited PDF'} </button>
                 </div>
-              ))}
-            </div>
-          </div>
+                <div className="page-info">
+                  Page {pageNumber} of {numPages}
+                </div>
+            </>
         )}
-        <div className="controls">
-          <button onClick={() => setPageNumber(pageNumber - 1)} disabled={pageNumber <= 1} className="page-nav-button">
-            Previous Page
-          </button>
-          <button onClick={() => setPageNumber(pageNumber + 1)} disabled={pageNumber >= numPages} className="page-nav-button">
-            Next Page
-          </button>
-          <button onClick={downloadEditedPDF} className="download-button save">{loading ? 'Submitting' : 'Save Edited PDF'} </button>
-        </div>
-        <div className="page-info">
-          Page {pageNumber} of {numPages}
-        </div>
+       
+
       </div>
     );
   }

@@ -26,28 +26,28 @@ class ChapterController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'videoUrl' => 'required|string', // Adjust max file size as needed
-            'attachment' => 'nullable|mimes:pdf,doc,docx|max:102400', // Adjust max file size and allowed file types as needed
+            'videoUrl' => 'required|string',
+            // 'attachment' => 'nullable|mimes:pdf,doc,docx|max:102400', // Adjust max file size and allowed file types as needed
             'position' => 'required|integer',
             'isPublished' => 'required|boolean',
             'isFree' => 'required|boolean',
             'courseId' => 'required|exists:courses,id',
         ]);
        
-       $attachmentUrl = null;
-       if ($request->hasFile('attachment')) {
-           $attachment = $request->file('attachment');
-           $attachmentPath = 'attachments/' . $attachment->getClientOriginalName();
-           Storage::disk('s3')->put($attachmentPath, file_get_contents($attachment));
-           $attachmentUrl = Storage::disk('s3')->url($attachmentPath);
-       }
+    //    $attachmentUrl = null;
+    //    if ($request->hasFile('attachment')) {
+    //        $attachment = $request->file('attachment');
+    //        $attachmentPath = 'attachments/' . $attachment->getClientOriginalName();
+    //        Storage::disk('s3')->put($attachmentPath, file_get_contents($attachment));
+    //        $attachmentUrl = Storage::disk('s3')->url($attachmentPath);
+    //    }
 
         // Save the chapter with the file URLs
         $chapter = Chapter::create([
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
             'video_url' => $validatedData['videoUrl'],
-            'attachment_url' => $attachmentUrl,
+            // 'attachment_url' => $attachmentUrl,
             'position' => $validatedData['position'],
             'isPublished' => $validatedData['isPublished'],
             'isFree' => $validatedData['isFree'],
@@ -85,12 +85,12 @@ class ChapterController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'videoUrl' => 'required|string', // Adjust max file size as needed
-            'attachment' => 'nullable|mimes:pdf,doc,docx|max:10240', // Adjust max file size and allowed file types as needed
             'position' => 'required|integer',
             'isPublished' => 'required|boolean',
             'isFree' => 'required|boolean',
             'courseId' => 'required|exists:courses,id',
+            // 'attachment' => 'nullable|mimes:pdf,doc,docx|max:10240', // Adjust max file size and allowed file types as needed
+        
         ]);
 
            $videoUrl = $chapter->video_url;
@@ -98,14 +98,14 @@ class ChapterController extends Controller
            if ($request->filled('videoUrl') && is_string($request->videoUrl)) {
               $videoUrl  = $request->videoUrl;
             }
-                $attachmentUrl = $chapter->attachment_url;
-                // If a new attachment file is provided, upload and update the URL
-                if ($request->hasFile('attachment')) {
-                    $attachment = $request->file('attachment');
-                    $attachmentPath = 'attachments/' . $attachment->getClientOriginalName();
-                    Storage::disk('s3')->put($attachmentPath, file_get_contents($attachment));
-                    $attachmentUrl = Storage::disk('s3')->url($attachmentPath);
-                }
+                // $attachmentUrl = $chapter->attachment_url;
+                // // If a new attachment file is provided, upload and update the URL
+                // if ($request->hasFile('attachment')) {
+                //     $attachment = $request->file('attachment');
+                //     $attachmentPath = 'attachments/' . $attachment->getClientOriginalName();
+                //     Storage::disk('s3')->put($attachmentPath, file_get_contents($attachment));
+                //     $attachmentUrl = Storage::disk('s3')->url($attachmentPath);
+                // }
 
 
         // Update the chapter with the new data
@@ -113,12 +113,12 @@ class ChapterController extends Controller
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
             'video_url' => $videoUrl,
-            'attachment_url' => $attachmentUrl,
             'position' => $validatedData['position'],
             'isPublished' => $validatedData['isPublished'],
             'isFree' => $validatedData['isFree'],
             'course_id' => $validatedData['courseId'],
-            'video_type' => 'mp4'
+            'video_type' => 'mp4',
+        // 'attachment_url' => $attachmentUrl,
         ]);
 
 
@@ -127,13 +127,17 @@ class ChapterController extends Controller
         $categories = Category::all();
         return redirect()->route('courses.edit', ['course' => $validatedData['courseId'], 'categories'=> $categories])
               ->with('success', 'Chapter Updated successfully');
-        //return redirect()->route('courses.index')->with('success', 'Chapter updated successfully');
     }
 
     public function destroy(Chapter $chapter)
     {
+        $courseId = $chapter->course_id;
         $chapter->delete();
-        return redirect()->route('courses.index')->with('success', 'Chapter deleted successfully!');
+        $course = Course::findOrFail($courseId);
+        $categories = Category::all();
+        return redirect()->route('courses.edit', ['course' => $courseId, 'categories'=> $categories])
+              ->with('success', 'Chapter Deleted successfully');
+        // return redirect()->route('courses.index')->with('success', 'Chapter deleted successfully!');
     }
 
     public function upload(Request $request)
