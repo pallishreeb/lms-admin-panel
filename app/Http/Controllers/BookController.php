@@ -35,10 +35,10 @@ class BookController extends Controller
         $request->validate([
             'title' => 'required|max:255',
             'description' => 'required',
-            'cover_pic' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'cover_pic' => 'image|mimes:jpeg,png,jpg,gif,svg|max:20480',
             'language' => 'required',
             'price' => 'required|numeric',
-            'pdf_book' => 'required|mimes:pdf|max:20480',
+            'pdf_book' => 'required|mimes:pdf|max:204800',
             'pages' => 'required|numeric',
             'category_id' => 'required|exists:categories,id',
             'is_published' => 'required|boolean',
@@ -82,10 +82,10 @@ class BookController extends Controller
         $request->validate([
             'title' => 'required|max:255',
             'description' => 'required',
-            'cover_pic' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'cover_pic' => 'image|mimes:jpeg,png,jpg,gif,svg|max:20480',
             'language' => 'required',
             'price' => 'required|numeric',
-            'pdf_book' => 'mimes:pdf|max:20480',
+            'pdf_book' => 'mimes:pdf|max:204800',  // Max 200MB
             'pages' => 'required|numeric',
             'category_id' => 'required|exists:categories,id',
             'is_published' => 'required|boolean',
@@ -122,5 +122,22 @@ class BookController extends Controller
         $book->delete();
 
         return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
+    }
+    public function upload(Request $request)
+    {
+        // Validate the request data, including file uploads
+        $validatedData = $request->validate([
+            'pdf_book' => 'required|mimes:pdf|max:204800',// Adjust max file size as needed
+        ]);
+       // Upload video file and get the URL
+       $bookUrl = null;
+       if ($request->hasFile('pdf_book')) {
+           $pdf_book = $request->file('pdf_book');
+           $pdf_bookPath = 'videos/' . $pdf_book->getClientOriginalName();
+           Storage::disk('s3')->put($pdf_bookPath, file_get_contents($pdf_book));
+           $bookUrl = Storage::disk('s3')->url($pdf_bookPath);
+       }
+ 
+       return response()->json(['success' => true, 'bookUrl' => $bookUrl]);
     }
 }

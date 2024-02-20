@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
-import { PDFDocument,PDFName} from 'pdf-lib';
+import { PDFDocument,PDFName,rgb} from 'pdf-lib';
 
 import axios from 'axios'; 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
@@ -11,6 +11,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 const api = "http://127.0.0.1:8000"
+// const api = "http://15.206.125.16"
 function App() {
     const [numPages, setNumPages] = useState(null);
     const [pageNumber, setPageNumber] = useState(1);
@@ -113,29 +114,38 @@ function App() {
         page.doc.context.obj({
             Type: 'Annot',
             Subtype: 'Link',
-            Rect: [x, y, x + 150, y + 20], // Adjust the rectangle dimensions as needed
-            Border: [0, 0, 0], // No border
-            C: [0, 0, 1], // Blue color
+            Rect: [x, y, x + 120, y + 20], // Adjust the rectangle dimensions as needed
+            Border: rgb(1, 0, 0), // No border
+            C: rgb(1, 0, 0), // Blue color
             A: {
                 Type: 'Action',
                 S: 'URI',
                 URI: uri,
             },
+            
         }),
     );
-
+// Add colored rectangle as background
+page.drawRectangle({
+  x,
+  y: y - 4 ,
+  width: 120,
+  height: 24,
+  color: rgb(0, 0, 0),
+});
 //add logo image to pdf link
     page.drawImage(image,  {
       x: x + 80, // Adjust the x-coordinate to position the image after the text
       y: y - 3, // Adjust the y-coordinate to vertically center the image with the text
-      width: 24,
-      height: 24,
+      width: 22,
+      height: 22,
   });
       // Add text to the page
       page.drawText(text, {
-        x: x + 2, // Adjust the x-coordinate to align the text within the rectangle
-        y: y + 2, // Adjust the y-coordinate to align the text within the rectangle
+        x: x + 3, // Adjust the x-coordinate to align the text within the rectangle
+        y: y + 3, // Adjust the y-coordinate to align the text within the rectangle
         size: 12, // Adjust the font size as needed
+        color:rgb(1, 1, 1),
     });
 
     // Return the link annotation

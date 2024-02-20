@@ -26,7 +26,7 @@ class BookController extends Controller
     {
 
         $request->validate([
-            'pdf_book' => 'required|mimes:pdf|max:20480',
+            'pdf_book' => 'required|mimes:pdf|max:204800',
         ]);
 
         $book = Book::findOrFail($id);
@@ -52,7 +52,8 @@ class BookController extends Controller
     public function fetchImage()
     {
         // URL of the image to fetch
-        $imageUrl = 'https://www.iconpacks.net/icons/1/free-video-icon-818-thumb.png';
+        // $imageUrl = 'https://www.iconpacks.net/icons/1/free-video-icon-818-thumb.png';
+        $imageUrl = 'https://png.pngtree.com/png-vector/20231115/ourmid/pngtree-play-icon-web-png-image_10604657.png';
 
         // Fetch the image data from the URL
         $imageData = file_get_contents($imageUrl);
