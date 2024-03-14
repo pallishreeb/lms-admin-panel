@@ -12,8 +12,8 @@ axios.defaults.headers.common["X-CSRF-TOKEN"] = document
     .querySelector('meta[name="csrf-token"]')
     .getAttribute("content");
 
-// const api = "http://127.0.0.1:8001";
-const api = "http://15.206.125.16"
+const api = "http://127.0.0.1:8000";
+// const api = "http://15.206.125.16"
 function App() {
     const [numPages, setNumPages] = useState(null);
     const [pageNumber, setPageNumber] = useState(1);
@@ -204,7 +204,7 @@ function App() {
 
         try {
             setLoading(true);
-            const response = await axios.get(`${api}/pdf_books/${pdfUrl}`, {
+            const response = await axios.get(`${pdfUrl}`, {
                 responseType: "arraybuffer",
             });
 
@@ -322,7 +322,7 @@ function App() {
                             {pdfUrl && (
                                 <div className="pdf-container">
                                     <Document
-                                        file={`${api}/pdf_books/${pdfUrl}`}
+                                        file={`${pdfUrl}`}
                                         onLoadSuccess={onDocumentLoadSuccess}
                                     >
                                         <Page

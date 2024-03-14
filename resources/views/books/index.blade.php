@@ -30,7 +30,7 @@
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Title</th>
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Cover Photo</th>
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                        <!-- <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Language</th> -->
+                        <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Pdf-Book</th>
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Price</th>
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Pages</th>
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Published</th>
@@ -45,13 +45,14 @@
                             <td class="px-6 py-4 whitespace-no-wrap">{{ $book->title }}</td>
                             <td class="px-6 py-4 whitespace-no-wrap">
                                 @if($book->cover_pic)
-                                    <img src="{{ asset('book_covers/' . $book->cover_pic) }}" alt="{{ $book->title }}" class="w-10 h-10 object-cover rounded-full">
+                                    <img src="{{$book->cover_pic}}" alt="{{ $book->title }}" class="w-10 h-10 object-cover rounded-full">
                                 @else
                                     No Image
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-no-wrap">{{ $book->category->name }}</td>
-                            <!-- <td class="px-6 py-4 whitespace-no-wrap">{{ $book->language }}</td> -->
+                            <td class="px-6 py-4 whitespace-no-wrap">
+                                 <a href="{{ $book->pdf_book }}" target="_blank" class="text-blue-500 hover:underline">view</a></td>
                             <td class="px-6 py-4 whitespace-no-wrappy-2 px-4 border-b">{{ $book->price }}</td>
                             <td class="px-6 py-4 whitespace-no-wrap">{{ $book->pages }}</td>
                             <td class="px-6 py-4 whitespace-no-wrap">{{ $book->is_published ? 'Yes' : 'No' }}</td>

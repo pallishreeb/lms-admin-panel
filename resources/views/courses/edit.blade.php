@@ -122,7 +122,7 @@
                     <label for="existing_cover_pic" class="block text-sm font-medium text-gray-700">Existing Cover
                         Picture:</label>
                     @if ($course->cover_pic)
-                        <img src="{{ asset('/course_covers/' . $course->cover_pic) }}" alt="Current Cover Picture"
+                        <img src="{{$course->cover_pic}}" alt="Current Cover Picture"
                             class="mb-2 w-4/6 h-36 ">
                         <p>Current Cover Picture: {{ $course->cover_pic }}</p>
                     @else

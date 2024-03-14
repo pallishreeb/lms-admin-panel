@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Storage;
 use setasign\Fpdi\Fpdi;
 
 class BookController extends Controller
@@ -31,16 +31,19 @@ class BookController extends Controller
 
         $book = Book::findOrFail($id);
         //delete old pdf book if it exists  
-        if ($book->pdf_book != null) {
-            unlink(public_path('pdf_books/') . $book->pdf_book);
-        }
-        //save new file 
+        // if ($book->pdf_book != null) {
+        //     unlink(public_path('pdf_books/') . $book->pdf_book);
+        // }
+       
         // Update PDF book
         if ($request->hasFile('pdf_book')) {
             $pdfBook = $request->file('pdf_book');
-            $pdfBookName = time() . '.' . $pdfBook->getClientOriginalExtension();
-            $pdfBook->move(public_path('pdf_books'), $pdfBookName);
-            $book->pdf_book = $pdfBookName;
+            // $pdfBookName = time() . '.' . $pdfBook->getClientOriginalExtension();
+            // $pdfBook->move(public_path('pdf_books'), $pdfBookName);
+            $pdfBookName = 'edited_pdf_books/' . $pdfBook->getClientOriginalName();
+            Storage::disk('s3')->put($pdfBookName, file_get_contents($pdfBook));
+            $bookUrl = Storage::disk('s3')->url($pdfBookName);
+            $book->pdf_book = $bookUrl;
             $book->save();
 
             return response()->json(['message' => 'PDF book updated successfully.']);

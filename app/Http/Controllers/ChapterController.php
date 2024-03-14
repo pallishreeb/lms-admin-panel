@@ -27,6 +27,7 @@ class ChapterController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'videoUrl' => 'required|string',
+            'attachmentUrl' => 'nullable|string',
             // 'attachment' => 'nullable|mimes:pdf,doc,docx|max:102400', // Adjust max file size and allowed file types as needed
             'position' => 'required|integer',
             'isPublished' => 'required|boolean',
@@ -34,20 +35,20 @@ class ChapterController extends Controller
             'courseId' => 'required|exists:courses,id',
         ]);
        
-    //    $attachmentUrl = null;
-    //    if ($request->hasFile('attachment')) {
-    //        $attachment = $request->file('attachment');
-    //        $attachmentPath = 'attachments/' . $attachment->getClientOriginalName();
-    //        Storage::disk('s3')->put($attachmentPath, file_get_contents($attachment));
-    //        $attachmentUrl = Storage::disk('s3')->url($attachmentPath);
-    //    }
+        //    $attachmentUrl = null;
+        //    if ($request->hasFile('attachment')) {
+        //        $attachment = $request->file('attachment');
+        //        $attachmentPath = 'attachments/' . $attachment->getClientOriginalName();
+        //        Storage::disk('s3')->put($attachmentPath, file_get_contents($attachment));
+        //        $attachmentUrl = Storage::disk('s3')->url($attachmentPath);
+        //    }
 
         // Save the chapter with the file URLs
         $chapter = Chapter::create([
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
             'video_url' => $validatedData['videoUrl'],
-            // 'attachment_url' => $attachmentUrl,
+            'attachment_url' => $validatedData['attachmentUrl'],
             'position' => $validatedData['position'],
             'isPublished' => $validatedData['isPublished'],
             'isFree' => $validatedData['isFree'],
@@ -98,6 +99,12 @@ class ChapterController extends Controller
            if ($request->filled('videoUrl') && is_string($request->videoUrl)) {
               $videoUrl  = $request->videoUrl;
             }
+
+            $attachmentUrl = $chapter->attachment_url;
+            // Check if the request has the videoUrl field with a string value
+           if ($request->filled('attachmentUrl') && is_string($request->attachmentUrl)) {
+              $attachmentUrl  = $request->attachmentUrl;
+            }
                 // $attachmentUrl = $chapter->attachment_url;
                 // // If a new attachment file is provided, upload and update the URL
                 // if ($request->hasFile('attachment')) {
@@ -118,7 +125,7 @@ class ChapterController extends Controller
             'isFree' => $validatedData['isFree'],
             'course_id' => $validatedData['courseId'],
             'video_type' => 'mp4',
-        // 'attachment_url' => $attachmentUrl,
+            'attachment_url' => $attachmentUrl,
         ]);
 
 
@@ -156,5 +163,41 @@ class ChapterController extends Controller
        }
  
        return response()->json(['success' => true, 'videoUrl' => $videoUrl]);
+    }
+    public function uploadPdf(Request $request)
+    {
+        // Validate the request data, including file uploads
+        $validatedData = $request->validate([
+            'attachment' => 'nullable|mimes:pdf,doc,docx|max:102400', // Adjust max file size as needed
+        ]);
+       // Upload attachment file and get the URL
+       $attachmentUrl = null;
+       if ($request->hasFile('attachment')) {
+           $attachment = $request->file('attachment');
+           $attachmentPath = 'attachments/' . $attachment->getClientOriginalName();
+           Storage::disk('s3')->put($attachmentPath, file_get_contents($attachment));
+           $attachmentUrl = Storage::disk('s3')->url($attachmentPath);
+       }
+ 
+       return response()->json(['success' => true, 'attachmentUrl' => $attachmentUrl]);
+    }
+    
+
+    public function uploadPdfBook(Request $request)
+    {
+        // Validate the request data, including file uploads
+        $validatedData = $request->validate([
+            'pdf_book' => 'required|mimes:pdf|max:204800',// Adjust max file size as needed
+        ]);
+       // Upload attachment file and get the URL
+       $attachmentUrl = null;
+       if ($request->hasFile('pdf_book')) {
+           $attachment = $request->file('pdf_book');
+           $attachmentPath = 'pdf_books/' . $attachment->getClientOriginalName();
+           Storage::disk('s3')->put($attachmentPath, file_get_contents($attachment));
+           $attachmentUrl = Storage::disk('s3')->url($attachmentPath);
+       }
+ 
+       return response()->json(['success' => true, 'attachmentUrl' => $attachmentUrl]);
     }
 }

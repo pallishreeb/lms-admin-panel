@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\Category;
+use Illuminate\Support\Facades\Storage;
 
 class CourseController extends Controller
 {
@@ -34,7 +35,7 @@ class CourseController extends Controller
         $request->validate([
             'title' => 'required|max:255',
             'description' => 'nullable',
-            'cover_pic' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'cover_pic' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:20480',
             'price' => 'nullable|numeric',
             'isPublished' => 'boolean',
             'isFree' => 'boolean',
@@ -52,11 +53,19 @@ class CourseController extends Controller
         ]);
 
         // Handle file upload for cover_pic
+        // if ($request->hasFile('cover_pic')) {
+        //     $coverPic = $request->file('cover_pic');
+        //     $coverPicName = time() . '.' . $coverPic->getClientOriginalExtension();
+        //     $coverPic->move(public_path('course_covers'), $coverPicName);
+        //     $course->cover_pic = $coverPicName;
+        // }
+        $cover_picUrl = null;
         if ($request->hasFile('cover_pic')) {
-            $coverPic = $request->file('cover_pic');
-            $coverPicName = time() . '.' . $coverPic->getClientOriginalExtension();
-            $coverPic->move(public_path('course_covers'), $coverPicName);
-            $course->cover_pic = $coverPicName;
+            $cover_pic = $request->file('cover_pic');
+            $cover_picPath = 'course_cover_pics/' . $cover_pic->getClientOriginalName();
+            Storage::disk('s3')->put($cover_picPath, file_get_contents($cover_pic));
+            $cover_picUrl = Storage::disk('s3')->url($cover_picPath);
+            $course->cover_pic = $cover_picUrl;
         }
 
         $course->save();
@@ -79,7 +88,7 @@ class CourseController extends Controller
             'description' => 'required',
             'isPublished' => 'required|boolean',
             'isFree' => 'required|boolean',
-            'cover_pic' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'cover_pic' => 'image|mimes:jpeg,png,jpg,gif,svg|max:20480',
             'price' => 'required|numeric',
             // Add other validation rules as needed
         ]);
@@ -90,9 +99,17 @@ class CourseController extends Controller
         ]));
 
         // Update cover picture if provided
+        // if ($request->hasFile('cover_pic')) {
+        //     $coverPicPath = $request->file('cover_pic')->store('course_covers', 'public');
+        //     $course->cover_pic = $coverPicPath;
+        // }
+        $cover_picUrl = null;
         if ($request->hasFile('cover_pic')) {
-            $coverPicPath = $request->file('cover_pic')->store('course_covers', 'public');
-            $course->cover_pic = $coverPicPath;
+            $cover_pic = $request->file('cover_pic');
+            $cover_picPath = 'course_cover_pics/' . $cover_pic->getClientOriginalName();
+            Storage::disk('s3')->put($cover_picPath, file_get_contents($cover_pic));
+            $cover_picUrl = Storage::disk('s3')->url($cover_picPath);
+            $course->cover_pic = $cover_picUrl;
         }
 
         $course->save(); 
@@ -102,6 +119,24 @@ class CourseController extends Controller
     {
         $course->delete();
         return redirect()->route('courses.index')->with('success', 'Course deleted successfully!');
+    }
+
+    public function uploadImage(Request $request)
+    {
+        // Validate the request data, including file uploads
+        $validatedData = $request->validate([
+            'cover_pic' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:20480',// Adjust max file size as needed
+        ]);
+       // Upload video file and get the URL
+       $cover_picUrl = null;
+       if ($request->hasFile('cover_pic')) {
+           $cover_pic = $request->file('cover_pic');
+           $cover_picPath = 'course_cover_pics/' . $cover_pic->getClientOriginalName();
+           Storage::disk('s3')->put($cover_picPath, file_get_contents($cover_pic));
+           $cover_picUrl = Storage::disk('s3')->url($cover_picPath);
+       }
+ 
+       return response()->json(['success' => true, 'cover_picUrl' => $cover_picUrl]);
     }
 }
 

@@ -88,7 +88,8 @@ Route::get('/chapters/{chapter}/edit', [ChapterController::class, 'edit'])->name
 Route::put('/chapters/{chapter}', [ChapterController::class, 'update'])->name('chapters.update')->middleware('auth');
 Route::delete('/chapters/{chapter}', [ChapterController::class, 'destroy'])->name('chapters.destroy')->middleware('auth');
 Route::post('/upload/video', [ChapterController::class, 'upload'])->name('upload.video');
-
+Route::post('/upload/pdf', [ChapterController::class, 'uploadPdf'])->name('upload.pdf');
+Route::post('/upload/pdfBook', [ChapterController::class, 'uploadPdfBook'])->name('upload.pdfBook');
 // Categories
 Route::get('/admin/categories', [CategoryController::class, 'index'])->name('categories.index')->middleware('auth');
 Route::get('/admin/categories/create', [CategoryController::class, 'create'])->name('categories.create')->middleware('auth');

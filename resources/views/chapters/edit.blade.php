@@ -54,13 +54,14 @@
 
                     <!-- Video -->
                     <div>
-                        <label for="video" class="block text-sm font-medium text-gray-700">Chapter Video:</label>
+                        
                         @if($chapter->video_url)
                             <video controls class="mb-2 w-full" style="max-height: 300px;">
                                 <source src="{{$chapter->video_url}}" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
                         @endif
+                        <label for="video" class="block text-sm font-medium text-gray-700">Upload New Video:</label>
                         <input type="file" id="video" name="video" class="mt-1 p-2 w-full border rounded-md" accept="video/mp4">
                         <progress id="progressBar" value="0" max="100" class="w-full" style="display: none;"></progress>
                         <div id="loadingIndicator" style="display: none;">Uploading...</div>
@@ -68,20 +69,23 @@
                     </div>
 
                     <!-- Existing PDF -->
-                    <!-- <div class="col-span-2">
+                    <div class="col">
                         <label for="existing_attachment" class="block text-sm font-medium text-gray-700">Existing PDF:</label>
                         @if($chapter->attachment_url)
                             <a href="{{ $chapter->attachment_url }}" target="_blank" class="text-blue-500 hover:underline">View Existing PDF</a>
                         @else
                             <p>No existing PDF.</p>
                         @endif
-                    </div> -->
+                    </div>
 
                     <!-- Attachment -->
-                    <!-- <div class="col-span-2">
-                        <label for="attachment" class="block text-sm font-medium text-gray-700">Chapter PDF:</label>
-                        <input type="file" name="attachment" class="mt-1 p-2 w-full border rounded-md" accept="application/pdf">
-                    </div> -->
+                    <div class="col">
+                        <label for="attachment"  class="block text-sm font-medium text-gray-700">Upload New  PDF:</label>
+                        <input type="file" id="attachment" name="attachment" class="mt-1 p-2 w-full border rounded-md" accept="application/pdf">
+                        <progress id="progressBarPdf" value="0" max="100" class="w-full" style="display: none;"></progress>
+                        <div id="loadingIndicatorPdf" style="display: none;">Uploading...</div>
+                        <input type="text" id="attachmentUrl" style="display: none;" name="attachmentUrl">
+                    </div>
 
                 </div>
 
@@ -128,6 +132,53 @@
     xhr.onerror = function() {
         // Hide loading indicator on upload error
         document.getElementById('loadingIndicator').style.display = 'none';
+
+        // Handle upload errors
+        console.error('Upload error');
+    };
+
+    xhr.send(formData);
+
+});
+
+//upload pdf to s3 and return url
+document.getElementById('attachment').addEventListener('change', function() {
+    var progressBar = document.getElementById('progressBarPdf');
+    progressBar.style.display = 'block'; // Show the progress bar
+    let file = this.files[0];
+    let formData = new FormData();
+    formData.append('attachment', file);
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', '{{ route("upload.pdf") }}', true);
+    xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+        // Show loading indicator when upload starts
+        document.getElementById('loadingIndicatorPdf').style.display = 'block';
+    xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+            let percentComplete = (e.loaded / e.total) * 100;
+            document.getElementById('progressBarPdf').value = percentComplete;
+        }
+    };
+
+    xhr.onload = function() {
+        // Hide loading indicator when upload completes
+        document.getElementById('loadingIndicatorPdf').style.display = 'none';
+
+        if (xhr.status === 200) {
+            console.log('Upload successful');
+            let response = JSON.parse(xhr.responseText);
+            let attachmentUrl = response.attachmentUrl; // Assuming the response contains the video URL
+            document.getElementById('attachmentUrl').value = attachmentUrl;
+        } else {
+            // Error occurred during upload
+            console.error('Upload error');
+        }
+    };
+
+    xhr.onerror = function() {
+        // Hide loading indicator on upload error
+        document.getElementById('loadingIndicatorPdf').style.display = 'none';
 
         // Handle upload errors
         console.error('Upload error');

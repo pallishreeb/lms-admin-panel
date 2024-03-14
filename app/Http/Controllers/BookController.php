@@ -6,7 +6,7 @@ use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-
+use Illuminate\Support\Facades\Storage;
 class BookController extends Controller
 {
     public function index(Request $request)
@@ -38,7 +38,8 @@ class BookController extends Controller
             'cover_pic' => 'image|mimes:jpeg,png,jpg,gif,svg|max:20480',
             'language' => 'required',
             'price' => 'required|numeric',
-            'pdf_book' => 'required|mimes:pdf|max:204800',
+            'attachmentUrl' => 'required|string',
+            // 'pdf_book' => 'required|mimes:pdf|max:204800',
             'pages' => 'required|numeric',
             'category_id' => 'required|exists:categories,id',
             'is_published' => 'required|boolean',
@@ -50,21 +51,34 @@ class BookController extends Controller
         ]));
 
         // Upload cover picture
+        // if ($request->hasFile('cover_pic')) {
+        //     $coverPic = $request->file('cover_pic');
+        //     $coverPicName = time() . '.' . $coverPic->getClientOriginalExtension();
+        //     $coverPic->move(public_path('book_covers'), $coverPicName);
+        //     $book->cover_pic = $coverPicName;
+        // }
+        $cover_picUrl = null;
         if ($request->hasFile('cover_pic')) {
-            $coverPic = $request->file('cover_pic');
-            $coverPicName = time() . '.' . $coverPic->getClientOriginalExtension();
-            $coverPic->move(public_path('book_covers'), $coverPicName);
-            $book->cover_pic = $coverPicName;
+            $cover_pic = $request->file('cover_pic');
+            $cover_picPath = 'book_cover_pics/' . $cover_pic->getClientOriginalName();
+            Storage::disk('s3')->put($cover_picPath, file_get_contents($cover_pic));
+            $cover_picUrl = Storage::disk('s3')->url($cover_picPath);
+            $book->cover_pic = $cover_picUrl;
         }
 
         // Upload PDF book
-        if ($request->hasFile('pdf_book')) {
-            $pdfBook = $request->file('pdf_book');
-            $pdfBookName = time() . '.' . $pdfBook->getClientOriginalExtension();
-            $pdfBook->move(public_path('pdf_books'), $pdfBookName);
-            $book->pdf_book = $pdfBookName;
+        // if ($request->hasFile('pdf_book')) {
+        //     $pdfBook = $request->file('pdf_book');
+        //     $pdfBookName = time() . '.' . $pdfBook->getClientOriginalExtension();
+        //     $pdfBook->move(public_path('pdf_books'), $pdfBookName);
+        //     $book->pdf_book = $pdfBookName;
+        // }
+        $attachmentUrl = null;
+        // Check if the request has the videoUrl field with a string value
+        if ($request->filled('attachmentUrl') && is_string($request->attachmentUrl)) {
+            $attachmentUrl  = $request->attachmentUrl;
+            $book->pdf_book = $attachmentUrl;
         }
-
         $book->save();
 
         return redirect()->route('books.index')->with('success', 'Book created successfully.');
@@ -85,7 +99,7 @@ class BookController extends Controller
             'cover_pic' => 'image|mimes:jpeg,png,jpg,gif,svg|max:20480',
             'language' => 'required',
             'price' => 'required|numeric',
-            'pdf_book' => 'mimes:pdf|max:204800',  // Max 200MB
+            // 'pdf_book' => 'mimes:pdf|max:204800',  // Max 200MB
             'pages' => 'required|numeric',
             'category_id' => 'required|exists:categories,id',
             'is_published' => 'required|boolean',
@@ -97,21 +111,35 @@ class BookController extends Controller
         ]));
 
         // Update cover picture
+        // if ($request->hasFile('cover_pic')) {
+        //     $coverPic = $request->file('cover_pic');
+        //     $coverPicName = time() . '.' . $coverPic->getClientOriginalExtension();
+        //     $coverPic->move(public_path('book_covers'), $coverPicName);
+        //     $book->cover_pic = $coverPicName;
+        // }
+        $cover_picUrl = null;
         if ($request->hasFile('cover_pic')) {
-            $coverPic = $request->file('cover_pic');
-            $coverPicName = time() . '.' . $coverPic->getClientOriginalExtension();
-            $coverPic->move(public_path('book_covers'), $coverPicName);
-            $book->cover_pic = $coverPicName;
+            $cover_pic = $request->file('cover_pic');
+            $cover_picPath = 'book_cover_pics/' . $cover_pic->getClientOriginalName();
+            Storage::disk('s3')->put($cover_picPath, file_get_contents($cover_pic));
+            $cover_picUrl = Storage::disk('s3')->url($cover_picPath);
+            $book->cover_pic = $cover_picUrl;
         }
 
         // Update PDF book
-        if ($request->hasFile('pdf_book')) {
-            $pdfBook = $request->file('pdf_book');
-            $pdfBookName = time() . '.' . $pdfBook->getClientOriginalExtension();
-            $pdfBook->move(public_path('pdf_books'), $pdfBookName);
-            $book->pdf_book = $pdfBookName;
+        // if ($request->hasFile('pdf_book')) {
+        //     $pdfBook = $request->file('pdf_book');
+        //     $pdfBookName = time() . '.' . $pdfBook->getClientOriginalExtension();
+        //     $pdfBook->move(public_path('pdf_books'), $pdfBookName);
+        //     $book->pdf_book = $pdfBookName;
+        // }
+        $attachmentUrl = null;
+        // Check if the request has the videoUrl field with a string value
+        if ($request->filled('attachmentUrl') && is_string($request->attachmentUrl)) {
+            $attachmentUrl  = $request->attachmentUrl;
+            $book->pdf_book = $attachmentUrl;
         }
-
+        
         $book->save();
 
         return redirect()->route('books.index')->with('success', 'Book updated successfully.');
@@ -140,4 +168,5 @@ class BookController extends Controller
  
        return response()->json(['success' => true, 'bookUrl' => $bookUrl]);
     }
+
 }

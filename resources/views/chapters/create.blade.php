@@ -38,10 +38,13 @@
                     </div>
 
                     <!-- Attachment -->
-                    <!-- <div>
+                    <div>
                         <label for="attachment" class="block text-sm font-medium text-gray-700">Chapter Attachment:</label>
                         <input type="file" id="attachment" name="attachment" accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="mt-1 p-2 w-full border rounded-md">
-                    </div> -->
+                        <progress id="progressBarPdf" value="0" max="100" class="w-full" style="display: none;"></progress>
+                        <div id="loadingIndicatorPdf" style="display: none;">Uploading...</div>
+                        <input type="text" id="attachmentUrl" style="display: none;" name="attachmentUrl">
+                    </div>
 
                     <!-- Position -->
                     <div>
@@ -120,5 +123,51 @@
 
 });
 
+//upload pdf to s3 and return url
+document.getElementById('attachment').addEventListener('change', function() {
+    var progressBar = document.getElementById('progressBarPdf');
+    progressBar.style.display = 'block'; // Show the progress bar
+    let file = this.files[0];
+    let formData = new FormData();
+    formData.append('attachment', file);
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', '{{ route("upload.pdf") }}', true);
+    xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+        // Show loading indicator when upload starts
+        document.getElementById('loadingIndicatorPdf').style.display = 'block';
+    xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+            let percentComplete = (e.loaded / e.total) * 100;
+            document.getElementById('progressBarPdf').value = percentComplete;
+        }
+    };
+
+    xhr.onload = function() {
+        // Hide loading indicator when upload completes
+        document.getElementById('loadingIndicatorPdf').style.display = 'none';
+
+        if (xhr.status === 200) {
+            console.log('Upload successful');
+            let response = JSON.parse(xhr.responseText);
+            let attachmentUrl = response.attachmentUrl; // Assuming the response contains the video URL
+            document.getElementById('attachmentUrl').value = attachmentUrl;
+        } else {
+            // Error occurred during upload
+            console.error('Upload error');
+        }
+    };
+
+    xhr.onerror = function() {
+        // Hide loading indicator on upload error
+        document.getElementById('loadingIndicatorPdf').style.display = 'none';
+
+        // Handle upload errors
+        console.error('Upload error');
+    };
+
+    xhr.send(formData);
+
+});
 </script>
 @endsection

@@ -41,7 +41,7 @@
                             <td class="px-6 py-4 whitespace-no-wrap">{{ $course->title }}</td>
                             <td class="px-6 py-4 whitespace-no-wrap">
                                 @if($course->cover_pic)
-                                    <img src="{{ asset('/course_covers/' . $course->cover_pic) }}" alt="{{ $course->title }}" class="w-10 h-10 object-cover rounded-full">
+                                    <img src="{{$course->cover_pic}}" alt="{{ $course->title }}" class="w-10 h-10 object-cover rounded-full">
                                 @else
                                     No Image
                                 @endif
