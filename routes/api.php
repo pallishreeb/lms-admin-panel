@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\BookController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\VideoController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -45,3 +46,32 @@ Route::group(['prefix' => 'chat'], function () {
     Route::post('send', [ChatController::class, 'sendMessage']);
     Route::delete('/messages/{id}', [ChatController::class, 'deleteMessage']);
 });
+
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    // Toggle like for a video
+    Route::post('videos/{videoId}/like', [VideoController::class, 'toggleLike']);
+
+    // Toggle dislike for a video
+    Route::post('videos/{videoId}/dislike', [VideoController::class, 'toggleDislike']);
+
+    // Add comment to a video
+    Route::post('videos/{videoId}/comments', [VideoController::class, 'addComment']);
+
+    // Delete comment by ID
+    Route::delete('comments/{commentId}', [VideoController::class, 'deleteComment']);
+
+    // Add reply to a comment
+    Route::post('comments/{commentId}/replies', [VideoController::class, 'addReply']);
+
+    // Delete reply by ID
+    Route::delete('replies/{replyId}', [VideoController::class, 'deleteReply']);
+
+    //Route::get('/videos/{videoId}/comments-replies',[VideoController::class, 'getCommentsWithReplies']);
+
+});
+
+// Get all videos for a book with like, dislike, and comment count
+Route::get('books/{bookId}/videos', [VideoController::class, 'getVideosForBook']);
+Route::get('/videos/{videoId}/comments-replies',[VideoController::class, 'getCommentsWithReplies']);

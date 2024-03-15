@@ -12,7 +12,7 @@ use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\AppConfigController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\PdfController;
-
+use App\Http\Controllers\VideoController;
 
 Route::get('/admin/config', [AppConfigController::class, 'index'])->name('admin.config');
 Route::post('/admin/update-notification-preference', [AppConfigController::class, 'updateNotificationPreference'])->name('admin.updateNotificationPreference');
@@ -112,3 +112,27 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::get('/pdf/getText/{id}', [PdfController::class, 'showPDF'])->name('books.show-pdf');
+
+
+//video on book
+// Route to show the video creation form
+Route::get('/books/{bookId}/videos/create', [VideoController::class, 'create'])->name('videos.create');
+
+// Route to store the newly created video
+Route::post('/books/{bookId}/videos', [VideoController::class, 'store'])->name('videos.store');
+
+// Route to show the video edit form
+Route::get('/books/{bookId}/videos/{videoId}/edit', [VideoController::class, 'edit'])->name('videos.edit');
+
+// Route to update the video
+Route::put('/books/{bookId}/videos/{videoId}', [VideoController::class, 'update'])->name('videos.update');
+
+// Route to delete the video
+Route::delete('/books/{bookId}/videos/{videoId}', [VideoController::class, 'destroy'])->name('videos.destroy');
+Route::post('/upload/video', [VideoController::class, 'upload'])->name('book.video');
+Route::post('/upload/pdf', [VideoController::class, 'uploadPdf'])->name('book.video.pdf');
+Route::get('/admin/comments', [VideoController::class, 'comments'])->name('admin.comments');
+
+
+Route::delete('/comments/{comment}', [VideoController::class, 'destroyComment'])->name('admin.comments.destroy');
+Route::delete('/replies/{reply}', [VideoController::class, 'destroyReply'])->name('admin.replies.destroy');
