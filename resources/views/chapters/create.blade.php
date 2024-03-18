@@ -13,6 +13,14 @@
 
             <form action="{{ route('chapters.store') }}" method="post" enctype="multipart/form-data" id="uploadForm">
                 @csrf
+                <div class="flex justify-end mt-1 gap-2"> <!-- Use 'justify-end' class to align items to the right -->
+                <!-- Submit Button -->
+                <button type="submit" class="mt-4 bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600">Create Chapter</button>
+                <button  class="mt-4 bg-red-500 text-white p-2 rounded-md hover:bg-red-600">
+                    <a href="{{ route('courses.edit', ['course' => $course->id]) }}">Cancel</a>
+                </button>    
+               </div>
+
                 <input type="hidden" name="courseId" value="{{ $course->id }}">
 
                 <div class="grid grid-cols-2 gap-4">
@@ -71,8 +79,7 @@
                     </div>
                 </div>
 
-                <!-- Submit Button -->
-                <button type="submit" class="mt-4 bg-yellow-500 text-white p-2 rounded-md hover:bg-blue-600">Create Chapter</button>
+               
             </form>
         </div>
     </div>

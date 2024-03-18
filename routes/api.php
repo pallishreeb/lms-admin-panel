@@ -68,6 +68,17 @@ Route::middleware('auth:sanctum')->group(function () {
     // Delete reply by ID
     Route::delete('replies/{replyId}', [VideoController::class, 'deleteReply']);
 
+    // Edit a comment
+    Route::post('comments/{commentId}', [VideoController::class, 'editComment'])->name('comments.edit');
+
+    // Edit a reply
+    Route::post('replies/{replyId}', [VideoController::class, 'editReply'])->name('replies.edit');
+
+    // Get all replies for a comment
+    Route::get('comments/{commentId}/replies', [VideoController::class, 'getRepliesForComment'])->name('comments.replies');
+
+    // Filter comments by order (oldest to newest or newest to oldest)
+    Route::get('comments/filter/{videoId}', [VideoController::class, 'getComments'])->name('comments.filter');
     //Route::get('/videos/{videoId}/comments-replies',[VideoController::class, 'getCommentsWithReplies']);
 
 });

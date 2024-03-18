@@ -151,7 +151,7 @@ class ChapterController extends Controller
     {
         // Validate the request data, including file uploads
         $validatedData = $request->validate([
-            'video' => 'required|mimetypes:video/mp4|max:102400', // Adjust max file size as needed
+            'video' => 'required|mimetypes:video/mp4|max:204800', // Adjust max file size as needed
         ]);
        // Upload video file and get the URL
        $videoUrl = null;

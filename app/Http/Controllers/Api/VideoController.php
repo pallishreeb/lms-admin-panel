@@ -75,7 +75,7 @@ class VideoController extends Controller
     {
         $request->validate([
             'content' => 'required|string',
-            'image' => 'nullable|image|max:2048', // Max 2MB
+            'image' => 'nullable|image|max:20480', // Max 2MB
         ]);
 
         $video = Video::findOrFail($videoId);
@@ -181,4 +181,90 @@ class VideoController extends Controller
 
         return response()->json($comments);
     }
+    public function editComment(Request $request, $commentId)
+    {
+        $request->validate([
+            'content' => 'required|string',
+            'image' => 'nullable|image|max:20480', // Max 2MB
+        ]);
+
+        $comment = Comment::findOrFail($commentId);
+
+        // Check if the authenticated user owns the comment
+        if ($comment->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // Update comment fields
+        $comment->content = $request->input('content');
+
+        // Upload new image if provided
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imagePath = 'book-videos-comments/' . $image->getClientOriginalName();
+            Storage::disk('s3')->put($imagePath, file_get_contents($image));
+            $imageUrl = Storage::disk('s3')->url($imagePath);
+            $comment->image = $imageUrl;
+        }
+
+        $comment->save();
+
+        return response()->json(['message' => 'Comment updated successfully'], 200);
+    }
+    public function getComments(Request $request, $videoId)
+    {
+        // Get the sorting order from the request
+        $order = $request->input('order', 'asc'); // Default to ascending order if not specified
+        $video = Video::findOrFail($videoId);
+
+        // Eager load comments with their replies
+        $comments = Comment::with('replies')->where('video_id', $video->id)->orderBy('created_at', $order)->get();
+        // Query comments for the specified video and order them accordingly
+        // $comments = Comment::where('video_id', $videoId)
+        //     ->orderBy('created_at', $order)
+        //     ->get();
+
+        return response()->json($comments);
+    }
+    public function editReply(Request $request, $replyId)
+    {
+        $request->validate([
+            'content' => 'required|string',
+            'image' => 'nullable|image|max:20480', // Max 2MB
+        ]);
+
+        $reply = Reply::findOrFail($replyId);
+
+        // Check if the authenticated user owns the reply
+        if ($reply->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // Update reply fields
+        $reply->content = $request->input('content');
+
+        // Upload new image if provided
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imagePath = 'book-videos-comments/' . $image->getClientOriginalName();
+            Storage::disk('s3')->put($imagePath, file_get_contents($image));
+            $imageUrl = Storage::disk('s3')->url($imagePath);
+            $reply->image = $imageUrl;
+        }
+
+        $reply->save();
+
+        return response()->json(['message' => 'Reply updated successfully'], 200);
+    }
+
+    public function getRepliesForComment(Request $request, $commentId)
+    {
+        $comment = Comment::findOrFail($commentId);
+
+        // Get all replies for the specified comment
+        $replies = $comment->replies;
+
+        return response()->json(['replies' => $replies], 200);
+    }
+
 }

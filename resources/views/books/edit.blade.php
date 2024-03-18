@@ -15,6 +15,7 @@
                 <thead>
                     <tr class="border">
                         <th class="px-4 py-2">Title</th>
+                        <th class="px-4 py-2">Video Link</th>
                         <th class="px-4 py-2">Like Count</th>
                         <th class="px-4 py-2">Dislike Count</th>
                         <th class="px-4 py-2">Comments Count</th>
@@ -25,6 +26,7 @@
                 @foreach($book->videos as $video)
                     <tr class="border">
                         <td class="px-4 py-2 text-center">{{ $video->title }}</td>
+                        <td class="px-4 py-2 text-center"><button class="copy-btn text-blue-500 hover:underline" data-url="{{ $video->video_url }}">Copy URL</button></td>
                         <td class="px-4 py-2 text-center">{{ $video->getLikesCountAttribute() }}</td>
                         <td class="px-4 py-2 text-center">{{ $video->getDislikesCountAttribute() }}</td>
                         <td class="px-4 py-2 text-center">{{ $video->comments->count() }}
@@ -50,6 +52,13 @@
         <form action="{{ route('books.update', ['book' => $book->id]) }}" method="post" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+            <div class="flex justify-end mt-1 gap-2"> <!-- Use 'justify-end' class to align items to the right -->
+             <!-- Submit Button -->
+             <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded-md">Save Updated Book</button>
+             <!-- cancel Button -->
+            <button class="bg-red-500 text-white px-4 py-2 rounded-md"><a href="/admin/books">Back</a></button>
+            </div>
+
 
             <div class="grid grid-cols-2 gap-4">
 
@@ -143,9 +152,6 @@
                 </div>
 
             </div>
-
-            <!-- Submit Button -->
-            <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded-md">Update Book</button>
         </form>
 
 
@@ -198,4 +204,19 @@
 
     });
 </script>
+<script>
+    document.querySelectorAll('.copy-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var videoUrl = this.getAttribute('data-url');
+            var tempInput = document.createElement('input');
+            tempInput.value = videoUrl;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert('Video URL copied to clipboard');
+        });
+    });
+</script>
+
 @endsection

@@ -8,6 +8,12 @@
         <!-- Book Form -->
         <form action="{{ route('books.store') }}" method="post" enctype="multipart/form-data">
     @csrf
+    <div class="flex justify-end mt-1 gap-1"> <!-- Use 'justify-end' class to align items to the right -->
+       <!-- Submit Button -->
+       <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded-md">Create Book</button>
+       <!-- cancel Button -->
+       <button class="bg-red-500 text-white px-4 py-2 rounded-md"><a href="/admin/books">Cancel</a></button>
+    </div>
 
     <div class="grid grid-cols-2 gap-4">
 
@@ -84,8 +90,7 @@
 
     </div>
 
-    <!-- Submit Button -->
-    <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded-md">Create Book</button>
+
 </form>
 
 </div>

@@ -28,8 +28,11 @@
                     <p class="text-red-500">{{ $message }}</p>
                 @enderror
             </div>
-
+            <div class="flex justify-start mt-1 gap-1"> 
             <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded-md">Update Category</button>
+            <button class="bg-red-500 text-white px-4 py-2 rounded-md"><a href="/admin/categories">cancel</a></button>
+            </div>
+           
         </form>
     </div>
 @endsection

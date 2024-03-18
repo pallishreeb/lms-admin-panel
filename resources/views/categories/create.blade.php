@@ -8,10 +8,11 @@
         <!-- Category Form -->
         <form action="{{ route('categories.store') }}" method="post" enctype="multipart/form-data">
             @csrf
+         
 
             <div class="mb-4">
                 <label for="name" class="block text-gray-700">Name:</label>
-                <input type="text" name="name" id="name" class="border p-2 w-full" value="{{ old('name') }}" required>
+                <input type="text" name="name" id="name" class="border p-2 w-1/2" value="{{ old('name') }}" required>
                 @error('name')
                     <p class="text-red-500">{{ $message }}</p>
                 @enderror
@@ -19,13 +20,15 @@
 
             <div class="mb-4">
                 <label for="image" class="block text-gray-700">Image:</label>
-                <input type="file" name="image" id="image" class="border p-2 w-full" accept="image/*">
+                <input type="file" name="image" id="image" class="border p-2 w-1/2" accept="image/*">
                 @error('image')
                     <p class="text-red-500">{{ $message }}</p>
                 @enderror
             </div>
-
+            <div class="flex justify-start mt-1 gap-1"> 
             <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded-md">Create Category</button>
+            <button class="bg-red-500 text-white px-4 py-2 rounded-md"><a href="/admin/categories">cancel</a></button>
+            </div>
         </form>
     </div>
 @endsection

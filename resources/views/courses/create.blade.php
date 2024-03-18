@@ -7,8 +7,6 @@
             <form method="post" action="{{ route('courses.store') }}" enctype="multipart/form-data" class="grid grid-cols-2 gap-4">
     @csrf
 
-
-
     <!-- Course Title -->
     <div class="mb-4 col-span-2 ">
         <label for="title" class="block text-sm font-medium text-gray-700">Course Title:</label>
@@ -61,9 +59,14 @@
             <option value="0">No</option>
         </select>
     </div>
-
-    <!-- Submit Button -->
-    <button type="submit" class="col-span-2 bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">Create Course</button>
+    <div class="flex justify-end mt-1 gap-1 col-span-2"> <!-- Use 'justify-end' class to align items to the right -->
+                 <!-- Submit Button -->
+                 <button type="submit" class="mt-4 bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600">Create Course</button>
+                <button  class="mt-4 bg-red-500 text-white p-2 rounded-md hover:bg-red-600">
+                    <a href="{{ route('courses.index') }}">Cancel</a>
+                </button>    
+    </div>
+   
 </form>
 
 

@@ -5,7 +5,12 @@
         <h1 class="text-2xl font-bold mb-4">Create New Video</h1>
         <form action="{{ route('videos.store', ['bookId' => $bookId]) }}" method="POST" enctype="multipart/form-data" class="max-w-full mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
             @csrf
-
+            <div class="flex justify-end mt-1 gap-1">
+                <button type="submit" class="bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Save</button>
+                <button  class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    <a href="{{ route('books.edit', ['book' => $bookId]) }}">Cancel</a>
+                </button>
+            </div>
             <div class="grid grid-cols-2 gap-4">
    
                     <div class="mb-4">
@@ -28,7 +33,7 @@
       
 
                     <div class="mb-4">
-                        <label for="attachment" class="block text-gray-700 text-sm font-bold mb-2">Attachment</label>
+                        <label for="attachment" class="block text-gray-700 text-sm font-bold mb-2">Attachment Pdf</label>
                         <input type="file" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="attachment" name="attachment" required>
                         <progress id="progressBarPdf" value="0" max="100" class="w-full" style="display: none;"></progress>
                         <div id="loadingIndicatorPdf" style="display: none;">Uploading...</div>
@@ -56,10 +61,6 @@
                         </select>
                     </div>
 
-            </div>
-
-            <div class="flex items-center justify-center mt-6">
-                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Submit</button>
             </div>
         </form>
     </div>

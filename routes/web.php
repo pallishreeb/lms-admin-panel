@@ -87,8 +87,8 @@ Route::post('/courses/chapters', [ChapterController::class, 'store'])->name('cha
 Route::get('/chapters/{chapter}/edit', [ChapterController::class, 'edit'])->name('chapters.edit')->middleware('auth');
 Route::put('/chapters/{chapter}', [ChapterController::class, 'update'])->name('chapters.update')->middleware('auth');
 Route::delete('/chapters/{chapter}', [ChapterController::class, 'destroy'])->name('chapters.destroy')->middleware('auth');
-Route::post('/upload/video', [ChapterController::class, 'upload'])->name('upload.video');
-Route::post('/upload/pdf', [ChapterController::class, 'uploadPdf'])->name('upload.pdf');
+Route::post('/upload/course/video', [ChapterController::class, 'upload'])->name('upload.video');
+Route::post('/upload/course/pdf', [ChapterController::class, 'uploadPdf'])->name('upload.pdf');
 Route::post('/upload/pdfBook', [ChapterController::class, 'uploadPdfBook'])->name('upload.pdfBook');
 // Categories
 Route::get('/admin/categories', [CategoryController::class, 'index'])->name('categories.index')->middleware('auth');
@@ -132,7 +132,5 @@ Route::delete('/books/{bookId}/videos/{videoId}', [VideoController::class, 'dest
 Route::post('/upload/video', [VideoController::class, 'upload'])->name('book.video');
 Route::post('/upload/pdf', [VideoController::class, 'uploadPdf'])->name('book.video.pdf');
 Route::get('/admin/comments', [VideoController::class, 'comments'])->name('admin.comments');
-
-
 Route::delete('/comments/{comment}', [VideoController::class, 'destroyComment'])->name('admin.comments.destroy');
 Route::delete('/replies/{reply}', [VideoController::class, 'destroyReply'])->name('admin.replies.destroy');

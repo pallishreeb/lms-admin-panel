@@ -89,8 +89,14 @@
 
                 </div>
 
-                <!-- Submit Button -->
-                <button type="submit" class="mt-4 bg-yellow-500 text-white p-2 rounded-md hover:bg-blue-600">Update Chapter</button>
+                <div class="flex justify-end mt-1 gap-2"> <!-- Use 'justify-end' class to align items to the right -->
+                 <!-- Submit Button -->
+                 <button type="submit" class="mt-4 bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600">Update Chapter</button>
+                <button  class="mt-4 bg-red-500 text-white p-2 rounded-md hover:bg-red-600">
+                    <a href="{{ route('courses.edit', ['course' => $chapter->course_id ]) }}">Cancel</a>
+                </button>    
+               </div>
+               
             </form>
         </div>
     </div>
