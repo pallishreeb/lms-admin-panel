@@ -40,7 +40,7 @@ class BookController extends Controller
             $pdfBook = $request->file('pdf_book');
             // $pdfBookName = time() . '.' . $pdfBook->getClientOriginalExtension();
             // $pdfBook->move(public_path('pdf_books'), $pdfBookName);
-            $pdfBookName = 'edited_pdf_books/' . $pdfBook->getClientOriginalName();
+            $pdfBookName = 'edited_pdf_books/' . $book->title . '_' . $pdfBook->getClientOriginalName();
             Storage::disk('s3')->put($pdfBookName, file_get_contents($pdfBook));
             $bookUrl = Storage::disk('s3')->url($pdfBookName);
             $book->pdf_book = $bookUrl;
