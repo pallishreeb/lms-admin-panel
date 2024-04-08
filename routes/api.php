@@ -86,3 +86,4 @@ Route::middleware('auth:sanctum')->group(function () {
 // Get all videos for a book with like, dislike, and comment count
 Route::get('books/{bookId}/videos', [VideoController::class, 'getVideosForBook']);
 Route::get('/videos/{videoId}/comments-replies',[VideoController::class, 'getCommentsWithReplies']);
+Route::post('/videos/details', [VideoController::class, 'getVideoDetails']);

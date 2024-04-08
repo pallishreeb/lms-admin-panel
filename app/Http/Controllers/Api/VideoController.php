@@ -266,5 +266,26 @@ class VideoController extends Controller
 
         return response()->json(['replies' => $replies], 200);
     }
+   
+    public function getVideoDetails(Request $request)
+{
+    $request->validate([
+        'video_url' => 'required|url', // Ensure video_url is present and a valid URL
+    ]);
+    // Decode the URL parameter
+    $videoUrl = $request->input('video_url');
 
+    // Find the video by its URL
+    $video = Video::where('video_url', $videoUrl)->first();
+
+    // If video not found, return 404 response
+    if (!$video) {
+        return response()->json(['error' => 'Video not found'], 404);
+    }
+
+    // Load the related data along with the video
+    $video->load('book', 'comments.user', 'comments.replies.user', 'likes', 'likesDislikes');
+
+    return response()->json(['video' => $video]);
+}
 }
