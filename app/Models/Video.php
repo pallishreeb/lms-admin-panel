@@ -48,6 +48,11 @@ class Video extends Model
     // Define the relationship with likes
     public function likes()
     {
-        return $this->belongsToMany(User::class, 'likes_dislikes', 'video_id', 'user_id');
+        return $this->belongsToMany(User::class, 'likes_dislikes', 'video_id', 'user_id')->where('is_like', true);
+    }
+    // Define the relationship with dislikes
+    public function dislikes()
+    {
+        return $this->belongsToMany(User::class, 'likes_dislikes', 'video_id', 'user_id')->where('is_like', false);
     }
 }

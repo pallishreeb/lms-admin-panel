@@ -311,7 +311,7 @@ public function getVideoDetails(Request $request)
     $video->load(['book', 'comments' => function ($query) {
         $query->orderByDesc('created_at'); // Order comments from latest to oldest
         $query->with('user', 'replies.user');
-    }, 'likes']);
+    }, 'likes','dislikes']);
 
     // Calculate the dislikes count
     $dislikesCount = $video->likesDislikes()->where('is_like', false)->count();
