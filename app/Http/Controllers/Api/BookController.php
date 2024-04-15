@@ -31,16 +31,13 @@ class BookController extends Controller
 
         $book = Book::findOrFail($id);
         //delete old pdf book if it exists  
-        // if ($book->pdf_book != null) {
-        //     unlink(public_path('pdf_books/') . $book->pdf_book);
-        // }
        
         // Update PDF book
         if ($request->hasFile('pdf_book')) {
             $pdfBook = $request->file('pdf_book');
-            // $pdfBookName = time() . '.' . $pdfBook->getClientOriginalExtension();
-            // $pdfBook->move(public_path('pdf_books'), $pdfBookName);
-            $pdfBookName = 'edited_pdf_books/' . $book->title . '_' . $pdfBook->getClientOriginalName();
+            // Generate a unique file name using the book's title and current timestamp
+           $timestamp = now()->timestamp;
+           $pdfBookName = 'edited_pdf_books/' . $book->title . '_' . $timestamp . '_' . $pdfBook->getClientOriginalName();
             Storage::disk('s3')->put($pdfBookName, file_get_contents($pdfBook));
             $bookUrl = Storage::disk('s3')->url($pdfBookName);
             $book->pdf_book = $bookUrl;

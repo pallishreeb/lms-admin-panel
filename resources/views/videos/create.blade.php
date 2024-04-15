@@ -24,7 +24,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="video" class="block text-gray-700 text-sm font-bold mb-2">Video File</label>
+                        <label for="video" class="block text-gray-700 text-sm font-bold mb-2">Video File(Max 500Mb)</label>
                         <input type="file" id="video" name="video" accept="video/mp4" class="mt-1 p-2 w-full border rounded-md" required>
                         <progress id="progressBar" value="0" max="100" class="w-full" style="display: none;"></progress>
                         <div id="loadingIndicator" style="display: none;">Uploading...</div>
@@ -33,7 +33,7 @@
       
 
                     <div class="mb-4">
-                        <label for="attachment" class="block text-gray-700 text-sm font-bold mb-2">Attachment Pdf</label>
+                        <label for="attachment" class="block text-gray-700 text-sm font-bold mb-2">Attachment Pdf(Max 200Mb)</label>
                         <input type="file" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="attachment" name="attachment" required>
                         <progress id="progressBarPdf" value="0" max="100" class="w-full" style="display: none;"></progress>
                         <div id="loadingIndicatorPdf" style="display: none;">Uploading...</div>
@@ -90,6 +90,7 @@
 
         if (xhr.status === 200) {
             console.log('Upload successful');
+            // console.log(xhr,"xhr")
             let response = JSON.parse(xhr.responseText);
             let video_url = response.videoUrl; // Assuming the response contains the video URL
             console.log(video_url)

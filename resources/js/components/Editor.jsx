@@ -12,8 +12,8 @@ axios.defaults.headers.common["X-CSRF-TOKEN"] = document
     .querySelector('meta[name="csrf-token"]')
     .getAttribute("content");
 
-// const api = "http://127.0.0.1:8000";
-const api = "http://15.206.125.16"
+const api = "http://127.0.0.1:8000";
+// const api = "http://65.2.10.129"
 function App() {
     const [numPages, setNumPages] = useState(null);
     const [pageNumber, setPageNumber] = useState(1);
