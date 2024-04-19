@@ -34,22 +34,22 @@
                     </div>
               
 
-                    <div class="mb-4">
+                    <!-- <div class="mb-4">
                         <label for="attachment" class="block text-gray-700 text-sm font-bold mb-2">Attachment Pdf(Max 200Mb)</label>
                         <input type="file" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="attachment" name="attachment">
                         <progress id="progressBarPdf" value="0" max="100" class="w-full" style="display: none;"></progress>
                         <div id="loadingIndicatorPdf" style="display: none;">Uploading...</div>
                         <input type="text" id="attachment_url" style="display: none;" name="attachment_url" value="{{ $video->attachment_url }}">
-                    </div>
+                    </div> -->
                 <!-- Existing Attachment -->
-                <div class="mb-4">
+                <!-- <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Existing Attachment</label>
                     <a href="{{ $video->attachment_url }}" target="_blank" class="text-blue-500 hover:underline">View Existing PDF Attachment</a>
-                </div>
-                    <div class="mb-4">
+                </div> -->
+                    <!-- <div class="mb-4">
                         <label for="position" class="block text-gray-700 text-sm font-bold mb-2">Position</label>
                         <input type="number" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="position" name="position" value="{{ $video->position }}" required>
-                    </div>
+                    </div> -->
 
                     <div class="mb-4">
                         <label for="isPublished" class="block text-gray-700 text-sm font-bold mb-2">Is Published</label>

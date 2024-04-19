@@ -40,6 +40,7 @@ class VideoController extends Controller
         $video->fill($request->all());
         $video->book_id = $book->id;
         $video->video_type = 'mp4';
+        $video->position = 1;
         $video->save();
 
         return Redirect::route('books.edit', $book->id)->with('success', 'Video added successfully');
