@@ -10,7 +10,7 @@ class CourseController extends Controller
 {
     public function getCourses()
     {
-        $courses = Course::with('category', 'chapters')->get();
+        $courses = Course::with('category', 'chapters')->orderBy('created_at', 'desc')->get();
     
         return response()->json(['courses' => $courses]);
     }

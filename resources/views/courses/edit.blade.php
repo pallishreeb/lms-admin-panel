@@ -16,44 +16,57 @@
         <!-- Chapters Section -->
         <div class="col-span-2 mb-4">
             <div class="flex items-center justify-between px-3 py-1">
-                <h2 class="text-2xl font-bold mb-2">Chapters</h2>
+                <!-- <h2 class="text-2xl font-bold mb-2">Chapters</h2> -->
                 <!-- Button to add new chapter -->
                 <a href="{{ route('chapters.create', ['courseId' => $course->id]) }}"
                     class="text-white px-5 py-2 rounded-md bg-yellow-500 hover:bg-yellow-600">Add Chapter</a>
             </div>
-
-
-            <!-- List existing chapters -->
+<!-- Videos Table -->
+<div class="mt-8">
+            <h2 class="text-lg font-semibold mb-4">Chapters</h2>
             @if (is_array($course->chapters) && count($course->chapters) > 0)
-            
-                <ul>
-                    @foreach ($course->chapters as $chapterId)
+            <table class="w-full border">
+                <thead>
+                    <tr class="border">
+                        <th class="px-4 py-2">Chapter Title</th>
+                        <th class="px-4 py-2">Video</th>
+                        <th class="px-4 py-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach ($course->chapters as $chapterId)
                         @php
                             $chapter = \App\Models\Chapter::find($chapterId);
                         @endphp
                         @if ($chapter)
-                            <li
-                                class="flex items-center  justify-between py-3 pl-5 pr-8 bg-white rounded border">
-                                <span class="font-medium text-md"> {{ $chapter->title }}</span>
-                                <div class=" flex gap-5">
-                                    <a href="{{ route('chapters.edit', ['chapter' => $chapter]) }}"
+                       <tr class="border">
+                        <td class="px-4 py-2 text-center">{{ $chapter->title }}</td>
+                        <td class="px-4 py-2 text-center">
+                            <a href="{{ $chapter->video_url }}" target="_blank" class="text-blue-500 hover:underline">View</a>
+                        </td>
+                        <!-- <td class="px-4 py-2 text-center">{{ $chapter->isPublished ? 'Yes' : 'No' }}</td> -->    
+                        </td>
+                        <td class="px-4 py-2 text-center">
+                        <a href="{{ route('chapters.edit', ['chapter' => $chapter]) }}"
                                         class="text-blue-500 hover:underline">Edit</a>
                                     <form action="{{ route('chapters.destroy', ['chapter' => $chapter]) }}"
-                                        method="post" class="inline">
+                                        method="post" class="inline" onsubmit="return confirmDelete(event)">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
                                             class="text-red-500 hover:underline">Delete</button>
                                     </form>
-                                </div>
-
-                            </li>
-                        @endif
+                        </td>
+                    </tr>
+                    @endif
                     @endforeach
-                </ul>
-            @else
+                </tbody>
+                @else
                 <p>No chapters available for this course.</p>
             @endif
+            </table>
+        </div>
+
         </div>
     </div>
 
@@ -141,4 +154,24 @@
             </form>
         </div>
     </div>
+    <script>
+    function confirmDelete(event) {
+        event.preventDefault(); // Prevent the default behavior of the form submission
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If the user confirms, submit the form
+                event.target.submit();
+            }
+        });
+    }
+</script>
 @endsection

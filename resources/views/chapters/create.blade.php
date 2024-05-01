@@ -38,7 +38,7 @@
 
                     <!-- Video -->
                     <div>
-                        <label for="video" class="block text-sm font-medium text-gray-700">Chapter Video:</label>
+                        <label for="video" class="block text-sm font-medium text-gray-700">Chapter Video(Format- MP4,Max 500MB):</label>
                         <input type="file" id="video" name="video" accept="video/mp4" class="mt-1 p-2 w-full border rounded-md" required>
                         <progress id="progressBar" value="0" max="100" class="w-full" style="display: none;"></progress>
                         <div id="loadingIndicator" style="display: none;">Uploading...</div>
@@ -47,7 +47,7 @@
 
                     <!-- Attachment -->
                     <div>
-                        <label for="attachment" class="block text-sm font-medium text-gray-700">Chapter Attachment:</label>
+                        <label for="attachment" class="block text-sm font-medium text-gray-700">Chapter Attachment(Optional Max 500MB):</label>
                         <input type="file" id="attachment" name="attachment" accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="mt-1 p-2 w-full border rounded-md">
                         <progress id="progressBarPdf" value="0" max="100" class="w-full" style="display: none;"></progress>
                         <div id="loadingIndicatorPdf" style="display: none;">Uploading...</div>
@@ -55,28 +55,28 @@
                     </div>
 
                     <!-- Position -->
-                    <div>
+                    <!-- <div>
                         <label for="position" class="block text-sm font-medium text-gray-700">Chapter Position:</label>
                         <input type="number" id="position" name="position" value="{{ old('position') }}" class="mt-1 p-2 w-full border rounded-md" required>
-                    </div>
+                    </div> -->
 
                     <!-- Is Published -->
-                    <div>
+                    <!-- <div>
                         <label for="isPublished" class="block text-sm font-medium text-gray-700">Is Published:</label>
                         <select id="isPublished" name="isPublished" class="mt-1 p-2 border rounded-md w-full" required>
                             <option value="1" {{ old('isPublished') == 1 ? 'selected' : '' }}>Yes</option>
                             <option value="0" {{ old('isPublished') == 0 ? 'selected' : '' }}>No</option>
                         </select>
-                    </div>
+                    </div> -->
 
                     <!-- Is Free -->
-                    <div>
+                    <!-- <div>
                         <label for="isFree" class="block text-sm font-medium text-gray-700">Is Free:</label>
                         <select id="isFree" name="isFree" class="mt-1 p-2 border rounded-md w-full" required>
                             <option value="1" {{ old('isFree') == 1 ? 'selected' : '' }}>Yes</option>
                             <option value="0" {{ old('isFree') == 0 ? 'selected' : '' }}>No</option>
                         </select>
-                    </div>
+                    </div> -->
                 </div>
 
                

@@ -34,7 +34,7 @@
                         </td>
                         <td class="px-4 py-2 text-center">
                             <a href="{{ route('videos.edit', ['bookId' => $video->book_id, 'videoId' => $video->id]) }}" class="text-blue-500 hover:underline">Edit</a>
-                            <form action="{{ route('videos.destroy', ['bookId' => $video->book_id, 'videoId' => $video->id]) }}" method="post" class="inline">
+                            <form action="{{ route('videos.destroy', ['bookId' => $video->book_id, 'videoId' => $video->id]) }}" method="post" class="inline" onsubmit="return confirmDelete(event)">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-500 hover:underline ml-2">Delete</button>
@@ -218,5 +218,24 @@
         });
     });
 </script>
+<script>
+    function confirmDelete(event) {
+        event.preventDefault(); // Prevent the default behavior of the form submission
 
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If the user confirms, submit the form
+                event.target.submit();
+            }
+        });
+    }
+</script>
 @endsection

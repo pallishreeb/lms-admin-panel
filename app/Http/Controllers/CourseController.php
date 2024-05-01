@@ -19,7 +19,7 @@ class CourseController extends Controller
             })->when(!$query, function ($queryBuilder) {
                 // If no query, return all categories
                 return $queryBuilder;
-            })->paginate(10);
+            })->orderBy('created_at', 'desc')->paginate(10);
 
         return view('courses.index', compact('courses'));
     }

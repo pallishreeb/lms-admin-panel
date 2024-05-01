@@ -8,11 +8,12 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\AppConfigurations;
 use Hash;
+use Twilio\Rest\Client;
 use App\Mail\OtpMail;
 use App\Notifications\OtpNotification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Twilio\Rest\Client;
+
 
 class AuthController extends Controller
 {
@@ -54,9 +55,22 @@ class AuthController extends Controller
         // $notificationPreference = AppConfigurations::where('config_key', 'notification_preference')->value('config_value');
         // Send OTP via email or sms
         //    if($notificationPreference === 'email'){
-        //     Mail::to($user->email)->send(new OtpMail($otp));
+        //      Mail::to($user->email)->send(new OtpMail($otp));
         //    }else{
-        //     event(new SendSMS($user,$otp));
+             // Use Twilio to send the OTP via SMS
+                //     $account_sid = getenv('TWILIO_ACCOUNT_SID');
+                //     $auth_token = getenv('TWILIO_AUTH_TOKEN');
+                //     $twilio_number = getenv('TWILIO_PHONE_NUMBER');
+
+                //     $client = new Client($account_sid, $auth_token);
+                //     $client->messages->create(
+                //         // Where to send a text message
+                //         '+918144128737',
+                //         array(
+                //             'from' => $twilio_number,
+                //             'body' => 'Your OTP is: ' . $otp,
+                //         )
+                //     );
         //    }
 
         return response()->json(['message' => 'Registration successfull. OTP sent to email and mobile number', 'otp'=>$otp]);
@@ -117,7 +131,21 @@ class AuthController extends Controller
                 // if($notificationPreference === 'email'){
                 //     Mail::to($user->email)->send(new OtpMail($otp));
                 // }else{
-                //     sendSms($user->phone,'Your One Time Password is: '. $otp);
+                //       // Use Twilio to send the OTP via SMS
+                //     $account_sid = getenv('TWILIO_ACCOUNT_SID');
+                //     $auth_token = getenv('TWILIO_AUTH_TOKEN');
+                //     $twilio_number = getenv('TWILIO_PHONE_NUMBER');
+
+                //     $client = new Client($account_sid, $auth_token);
+                //     $client->messages->create(
+                //         // Where to send a text message
+                //         '+918144128737',
+                //         array(
+                //             'from' => $twilio_number,
+                //             'body' => 'Your OTP is: ' . $otp,
+                //         )
+                //     );
+                //     //sendSms($user->phone,'Your One Time Password is: '. $otp);
                 // }
 
                 if(Hash::check($request->password,$user->password)){

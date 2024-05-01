@@ -29,9 +29,9 @@ class ChapterController extends Controller
             'videoUrl' => 'required|string',
             'attachmentUrl' => 'nullable|string',
             // 'attachment' => 'nullable|mimes:pdf,doc,docx|max:102400', // Adjust max file size and allowed file types as needed
-            'position' => 'required|integer',
-            'isPublished' => 'required|boolean',
-            'isFree' => 'required|boolean',
+            // 'position' => 'required|integer',
+            // 'isPublished' => 'required|boolean',
+            // 'isFree' => 'required|boolean',
             'courseId' => 'required|exists:courses,id',
         ]);
        
@@ -49,11 +49,14 @@ class ChapterController extends Controller
             'description' => $validatedData['description'],
             'video_url' => $validatedData['videoUrl'],
             'attachment_url' => $validatedData['attachmentUrl'],
-            'position' => $validatedData['position'],
-            'isPublished' => $validatedData['isPublished'],
-            'isFree' => $validatedData['isFree'],
+            'position' => 0,
+            // 'isPublished' => $validatedData['isPublished'],
+            // 'isFree' => $validatedData['isFree'],
+            'isPublished' => 1,
+            'isFree' => 1,
             'course_id' => $validatedData['courseId'],
             'video_type' => 'mp4'
+
         ]);
 
 
@@ -86,9 +89,9 @@ class ChapterController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'position' => 'required|integer',
-            'isPublished' => 'required|boolean',
-            'isFree' => 'required|boolean',
+            // 'position' => 'required|integer',
+            // 'isPublished' => 'required|boolean',
+            // 'isFree' => 'required|boolean',
             'courseId' => 'required|exists:courses,id',
             // 'attachment' => 'nullable|mimes:pdf,doc,docx|max:10240', // Adjust max file size and allowed file types as needed
         
@@ -120,9 +123,9 @@ class ChapterController extends Controller
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
             'video_url' => $videoUrl,
-            'position' => $validatedData['position'],
-            'isPublished' => $validatedData['isPublished'],
-            'isFree' => $validatedData['isFree'],
+            // 'position' => $validatedData['position'],
+            // 'isPublished' => $validatedData['isPublished'],
+            // 'isFree' => $validatedData['isFree'],
             'course_id' => $validatedData['courseId'],
             'video_type' => 'mp4',
             'attachment_url' => $attachmentUrl,

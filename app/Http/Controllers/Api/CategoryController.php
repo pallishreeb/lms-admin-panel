@@ -11,8 +11,8 @@ class CategoryController extends Controller
 {
     public function allCategories()
     {
-        $categories = Category::all();
-
+        // $categories = Category::all();
+        $categories = Category::orderBy('created_at', 'desc')->get();
         return response()->json(['categories' => $categories]);
     }
 }
