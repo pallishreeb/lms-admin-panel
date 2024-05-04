@@ -155,7 +155,7 @@ class BookController extends Controller
     {
         // Validate the request data, including file uploads
         $validatedData = $request->validate([
-            'pdf_book' => 'required|mimes:pdf|max:204800',// Adjust max file size as needed
+            'pdf_book' => 'required|mimes:pdf|max:512000',// Adjust max file size as needed
         ]);
        // Upload video file and get the URL
        $bookUrl = null;

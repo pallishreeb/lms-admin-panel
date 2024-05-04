@@ -75,7 +75,7 @@ class VideoController extends Controller
     {
         // Validate the request data, including file uploads
         $validatedData = $request->validate([
-            'video' => 'required|mimetypes:video/mp4|max:307200', // Adjust max file size as needed
+            'video' => 'required|mimetypes:video/mp4|max:512000', // Adjust max file size as needed
         ]);
        // Upload video file and get the URL
        $videoUrl = null;
@@ -92,7 +92,7 @@ class VideoController extends Controller
     {
         // Validate the request data, including file uploads
         $validatedData = $request->validate([
-            'attachment' => 'nullable|mimes:pdf,doc,docx|max:102400', // Adjust max file size as needed
+            'attachment' => 'nullable|mimes:pdf,doc,docx|max:512000', // Adjust max file size as needed
         ]);
        // Upload attachment file and get the URL
        $attachmentUrl = null;
