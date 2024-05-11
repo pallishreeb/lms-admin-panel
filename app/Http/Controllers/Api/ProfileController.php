@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use Hash;
 use File;
+
 class ProfileController extends Controller
 {
     public function change_password(Request $request){
@@ -42,7 +44,8 @@ class ProfileController extends Controller
         $validator = Validator::make($request->all(), [
             'name'=>'required|min:2|max:100',
             'mobile_number'=>'nullable|max:100',
-            'address'=>'nullable|max:100'
+            'address'=>'nullable|max:100',
+            'profile_image' => 'nullable|image|max:20480' // Max file size: 2MB
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -52,11 +55,26 @@ class ProfileController extends Controller
         } 
 
         $user=$request->user();
-        $user->update([
-            'name'=>$request->name,
-            'mobile_number'=>$request->mobile_number,
-            'address'=>$request->address
-        ]);
+        // $user->update([
+        //     'name'=>$request->name,
+        //     'mobile_number'=>$request->mobile_number,
+        //     'address'=>$request->address
+        // ]);
+        // Update profile fields
+        $user->name = $request->name;
+        $user->mobile_number = $request->mobile_number;
+        $user->address = $request->address;
+
+        // Handle profile image upload
+        if ($request->hasFile('profile_image')) {
+            $profileImage = $request->file('profile_image');
+            $imageName = 'user_profile_pics/' . $profileImage->getClientOriginalName();
+            // Set the profile image URL in the user model
+            Storage::disk('s3')->put($imageName, file_get_contents($profileImage));
+            $user->profile_image = Storage::disk('s3')->url($imageName);
+        }
+
+        $user->save();
 
         return response()->json([
             'message'=>'Profile successfully updated',

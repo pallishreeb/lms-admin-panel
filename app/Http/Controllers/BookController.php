@@ -147,9 +147,19 @@ class BookController extends Controller
 
     public function destroy(Book $book)
     {
-        $book->delete();
+        try {
+            // Check if the book is linked with other tables
+            if ($book->videos()->exists()) {
+                throw new \Exception('Course is linked with other tables and cannot be deleted.');
+            }
+    
+            $book->delete();
 
-        return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
+            return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('books.index')->with('error', $e->getMessage());
+        }
+
     }
     public function upload(Request $request)
     {

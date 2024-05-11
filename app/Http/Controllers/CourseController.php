@@ -117,8 +117,18 @@ class CourseController extends Controller
     }
     public function destroy(Course $course)
     {
-        $course->delete();
-        return redirect()->route('courses.index')->with('success', 'Course deleted successfully!');
+        try {
+            // Check if the course is linked with other tables
+            if ($course->chapters()->exists()) {
+                throw new \Exception('Course is linked with other tables and cannot be deleted.');
+            }
+    
+            $course->delete();
+            return redirect()->route('courses.index')->with('success', 'Course deleted successfully!');
+        } catch (\Exception $e) {
+            return redirect()->route('courses.index')->with('error', $e->getMessage());
+        }
+
     }
 
     public function uploadImage(Request $request)
