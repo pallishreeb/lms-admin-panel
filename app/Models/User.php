@@ -27,7 +27,8 @@ class User extends Authenticatable
         'otp', 
         'otp_valid_until',
         'role',
-        'device_id'
+        'device_id',
+        'profile_image'
     ];
 
     /**

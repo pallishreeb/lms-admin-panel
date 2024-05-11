@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\ChatMessage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ChatController extends Controller
 {
@@ -31,12 +32,21 @@ class ChatController extends Controller
         {
             $request->validate([
                 'message' => 'required|string',
+                'image' => 'nullable|image|max:20480'
             ]);
         
             $message = new ChatMessage([
                 'message' => $request->input('message'),
                 'user_id' => $request->input('user_id'),
             ]);
+               // Handle profile image upload
+            if ($request->hasFile('image')) {
+                $chatImage = $request->file('image');
+                $imageName = 'chat_messages_pics/' . $chatImage->getClientOriginalName();
+                // Set the profile image URL in the user model
+                Storage::disk('s3')->put($imageName, file_get_contents($chatImage));
+                $message->image = Storage::disk('s3')->url($imageName);
+            }
     
             $message->save();
     

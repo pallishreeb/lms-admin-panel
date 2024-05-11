@@ -13,6 +13,10 @@
             @endif
 
             <span>{{ $chat->message }}</span>
+            @if ($chat->image)
+           <img src="{{$chat->image }}" alt="Chat Image" class="w-30 rounded-lg">
+                                         
+           @endif
             <span class="text-xs text-gray-500">({{ $chat->created_at->diffForHumans() }})</span>
         </div>
 
