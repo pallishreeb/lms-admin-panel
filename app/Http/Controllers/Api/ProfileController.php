@@ -42,9 +42,10 @@ class ProfileController extends Controller
 
     public function update_profile(Request $request){
         $validator = Validator::make($request->all(), [
-            'name'=>'required|min:2|max:100',
+            'name'=>'nullable|min:2|max:100',
             'mobile_number'=>'nullable|max:100',
             'address'=>'nullable|max:100',
+            'password'=>'nullable|min:6|max:100',
             'profile_image' => 'nullable|image|max:20480' // Max file size: 2MB
         ]);
         if ($validator->fails()) {
@@ -54,17 +55,29 @@ class ProfileController extends Controller
             ],422);
         } 
 
-        $user=$request->user();
+        //$user=$request->user();
         // $user->update([
         //     'name'=>$request->name,
         //     'mobile_number'=>$request->mobile_number,
         //     'address'=>$request->address
         // ]);
         // Update profile fields
-        $user->name = $request->name;
-        $user->mobile_number = $request->mobile_number;
-        $user->address = $request->address;
-
+        $user=$request->user();
+        if ($request->has('name')) {
+            $user->name = $request->name;
+        }
+        
+        if ($request->has('mobile_number')) {
+            $user->mobile_number = $request->mobile_number;
+        }
+        
+        if ($request->has('address')) {
+            $user->address = $request->address;
+        }
+        
+        if ($request->has('password')) {
+            $user->password = Hash::make($request->password);
+        }
         // Handle profile image upload
         if ($request->hasFile('profile_image')) {
             $profileImage = $request->file('profile_image');
