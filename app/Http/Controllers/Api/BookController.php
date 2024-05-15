@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Book;
+use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use setasign\Fpdi\Fpdi;
@@ -67,6 +68,26 @@ class BookController extends Controller
 
         // Return the image data as a response with the appropriate content type
         return response($imageData)->header('Content-Type', 'image/png');
+    }
+
+    public function search(Request $request)
+    {
+        // Get the search query from the request
+        $query = $request->input('query');
+
+        // Search for books
+        $books = Book::where('title', 'like', "%$query%")->get();
+
+        // Search for courses
+        $courses = Course::where('title', 'like', "%$query%")->get();
+
+        // Check if any results found
+        if ($books->isEmpty() && $courses->isEmpty()) {
+            return response()->json(['message' => 'No data found'], 404);
+        }
+
+        // Return the search results
+        return response()->json(['books' => $books, 'courses' => $courses]);
     }
 
 }

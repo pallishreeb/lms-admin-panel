@@ -181,10 +181,10 @@ function App() {
         });
         //add logo image to pdf link
         page.drawImage(image, {
-            x: x + width + 15, // Adjust the x-coordinate to position the image after the text
+            x: x + width + 16, // Adjust the x-coordinate to position the image after the text
             y: y - 1, // Adjust the y-coordinate to vertically center the image with the text
-            width: 14,
-            height: 14,
+            width: 16,
+            height: 16,
         });
         // Add text to the page
         page.drawText(text, {
