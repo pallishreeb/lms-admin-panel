@@ -14,8 +14,8 @@ return [
     */
 
     // 'default' => env('MAIL_MAILER', 'smtp'),
-    'driver' => env('MAIL_DRIVER', 'ses'),
-
+    // 'driver' => env('MAIL_DRIVER', 'ses'),
+    'default' => env('MAIL_MAILER', 'sendgrid'),
     /*
     |--------------------------------------------------------------------------
     | Mailer Configurations
@@ -35,6 +35,10 @@ return [
     */
 
     'mailers' => [
+        'sendgrid' => [
+            'transport' => 'sendgrid',
+            'api_key' => env('SENDGRID_API_KEY'),
+        ],
         'smtp' => [
             'transport' => 'smtp',
             'url' => env('MAIL_URL'),
