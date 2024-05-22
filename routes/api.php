@@ -30,7 +30,7 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
 Route::get('/auth/user',[AuthController::class,'user'])->middleware('auth:sanctum');
 Route::post('/auth/logout',[AuthController::class,'logout'])->middleware('auth:sanctum');
-
+Route::post('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 Route::post('/profile/change-password',[ProfileController::class,'change_password'])->middleware('auth:sanctum');
 Route::post('/profile/update-profile',[ProfileController::class,'update_profile'])->middleware('auth:sanctum');
 

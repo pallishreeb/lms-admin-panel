@@ -10,9 +10,13 @@ use App\Models\AppConfigurations;
 use Hash;
 use Twilio\Rest\Client;
 use App\Mail\OtpMail;
+use Laravel\Socialite\Facades\Socialite;
 use App\Notifications\OtpNotification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+
 
 
 class AuthController extends Controller
@@ -254,5 +258,44 @@ class AuthController extends Controller
         }
 
         return response()->json(['message' => 'Invalid OTP or expired'], 422);
+    }
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->stateless()->redirect();
+    }
+
+    public function handleGoogleCallback(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'token' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => 'Validation fails', 'errors' => $validator->errors()], 422);
+        }
+
+        $client = new Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
+        $payload = $client->verifyIdToken($request->token);
+
+        if ($payload) {
+            $googleId = $payload['sub'];
+            $email = $payload['email'];
+            $name = $payload['name'];
+
+            $user = User::firstOrCreate(
+                ['email' => $email],
+                ['name' => $name, 'password' => Hash::make(Str::random(24))]
+            );
+
+            $token = $user->createToken('auth-token')->plainTextToken;
+
+            return response()->json([
+                'message' => 'Authentication successful',
+                'token' => $token,
+                'user' => $user,
+            ]);
+        } else {
+            return response()->json(['error' => 'Unable to authenticate with Google. Please try again.'], 500);
+        }
     }
 }
