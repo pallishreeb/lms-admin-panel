@@ -24,6 +24,12 @@ class BookController extends Controller
 
         return response()->json(['pdf_book' => $book->pdf_book]);
     }
+    public function getBookDetails($id)
+    {
+        $book = Book::findOrFail($id);
+
+        return response()->json(['pdf_book' => $book]);
+    }
     public function updatePdfBook(Request $request, $id)
     {
 

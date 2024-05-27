@@ -10,7 +10,6 @@ use App\Models\AppConfigurations;
 use Hash;
 use Twilio\Rest\Client;
 use App\Mail\OtpMail;
-use Laravel\Socialite\Facades\Socialite;
 use App\Notifications\OtpNotification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -266,35 +265,92 @@ class AuthController extends Controller
 
     public function handleGoogleCallback(Request $request)
     {
+        // Validate the incoming request
         $validator = Validator::make($request->all(), [
-            'token' => 'required|string',
+            'google_id' => 'required|string',
+            'email' => 'required|email',
+            'name' => 'required|string',
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json(['message' => 'Validation fails', 'errors' => $validator->errors()], 422);
         }
-
-        $client = new Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
-        $payload = $client->verifyIdToken($request->token);
-
-        if ($payload) {
-            $googleId = $payload['sub'];
-            $email = $payload['email'];
-            $name = $payload['name'];
-
+    
+        try {
+            // Extract user details from the request
+            $google_id = $request->input('google_id');
+            $email = $request->input('email');
+            $name = $request->input('name');
+    
+            // Find or create the user
             $user = User::firstOrCreate(
-                ['email' => $email],
-                ['name' => $name, 'password' => Hash::make(Str::random(24))]
+                ['google_id' => $google_id],
+                ['email' => $email, 'name' => $name, 'password' => Hash::make(Str::random(24))]
             );
-
+    
+            // Generate a token for the authenticated user
             $token = $user->createToken('auth-token')->plainTextToken;
-
+    
             return response()->json([
                 'message' => 'Authentication successful',
                 'token' => $token,
                 'user' => $user,
             ]);
-        } else {
+        } catch (\Exception $e) {
+            // Log the exception message for debugging
+            \Log::error('Google authentication error', ['exception' => $e->getMessage()]);
+            return response()->json(['error' => 'Unable to authenticate with Google. Please try again.', 'exception' => $e->getMessage()], 500);
+        }
+    }
+    
+    
+    public function handleGoogleCallbackNew(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'token' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation fails',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $client = new Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);  // Specify the CLIENT_ID of the app that accesses the backend
+            $payload = $client->verifyIdToken($request->token);
+
+            if ($payload) {
+                $googleUser = (object) $payload;
+                $user = User::where('email', $googleUser->email)->first();
+
+                if ($user) {
+                    // If user exists, log them in
+                    Auth::login($user, true);
+                } else {
+                    // If user does not exist, create a new user
+                    $user = User::create([
+                        'name' => $googleUser->name,
+                        'email' => $googleUser->email,
+                        'password' => Hash::make(Str::random(24)), // Generate a random password
+                    ]);
+
+                    Auth::login($user, true);
+                }
+
+                // Generate a token for the authenticated user
+                $token = $user->createToken('auth-token')->plainTextToken;
+
+                return response()->json([
+                    'message' => 'Authentication successful',
+                    'token' => $token,
+                    'user' => $user
+                ]);
+            } else {
+                return response()->json(['error' => 'Invalid Google token'], 401);
+            }
+        } catch (\Exception $e) {
             return response()->json(['error' => 'Unable to authenticate with Google. Please try again.'], 500);
         }
     }

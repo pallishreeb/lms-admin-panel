@@ -31,11 +31,14 @@ Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
 Route::get('/auth/user',[AuthController::class,'user'])->middleware('auth:sanctum');
 Route::post('/auth/logout',[AuthController::class,'logout'])->middleware('auth:sanctum');
 Route::post('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
+Route::post('/auth/google/callback-api', [AuthController::class, 'handleGoogleCallbackNew']);
+
 Route::post('/profile/change-password',[ProfileController::class,'change_password'])->middleware('auth:sanctum');
 Route::post('/profile/update-profile',[ProfileController::class,'update_profile'])->middleware('auth:sanctum');
 
 Route::get('/categories', [CategoryController::class, 'allCategories']);
 Route::get('/books', [BookController::class, 'getBooks']);
+Route::get('/book/{id}', [BookController::class, 'getBookDetails']);
 Route::get('/search', [BookController::class,'search']);
 Route::get('/pdf-url/{id}', [BookController::class, 'getPdfBook']);
 Route::post('/pdf-url/{id}', [BookController::class, 'updatePdfBook']);

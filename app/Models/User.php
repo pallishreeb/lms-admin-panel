@@ -28,7 +28,8 @@ class User extends Authenticatable
         'otp_valid_until',
         'role',
         'device_id',
-        'profile_image'
+        'profile_image',
+        'google_id'
     ];
 
     /**
