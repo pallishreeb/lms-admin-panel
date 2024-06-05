@@ -28,22 +28,36 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|unique:categories|max:255',
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'type' => 'required|in:Book,Course',
         ]);
 
-        $category = new Category;
-        $category->name = $request->name;
+        // Check for unique combination of name and type
+        $existingCategory = Category::where('name', $validatedData['name'])
+                                    ->where('type', $validatedData['type'])
+                                    ->first();
+
+        if ($existingCategory) {
+            return redirect()->back()->withErrors(['name' => 'The combination of name and type must be unique.']);
+        }
+
+        // $category = new Category;
+        // $category->name = $request->name;
+        // $category->type = $request->type;
+
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('category_images'), $imageName);
-            $category->image = $imageName;
+            // $category->image = $imageName;
+            $validatedData['image'] = $imageName;
         }
 
-        $category->save();
+        // $category->save();
+        Category::create($validatedData);
 
         return redirect()->route('categories.index')->with('success', 'Category created successfully.');
     }
@@ -55,21 +69,35 @@ class CategoryController extends Controller
 
     public function update(Request $request, Category $category)
     {
-        $request->validate([
-            'name' => 'required|unique:categories,name,' . $category->id . '|max:255',
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'type' => 'required|in:Book,Course',
         ]);
 
-        $category->name = $request->name;
+        // Check for unique combination of name and type, excluding the current category
+        $existingCategory = Category::where('name', $validatedData['name'])
+                                    ->where('type', $validatedData['type'])
+                                    ->where('id', '!=', $category->id)
+                                    ->first();
 
+        if ($existingCategory) {
+            return redirect()->back()->withErrors(['name' => 'The combination of name and type must be unique.']);
+        }
+
+        // $category->name = $request->name;
+        // $category->type = $request->type;
+         
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('category_images'), $imageName);
-            $category->image = $imageName;
+            // $category->image = $imageName;
+            $validatedData['image'] = $imageName;
         }
 
-        $category->save();
+        // $category->save();
+        $category->update($validatedData);
 
         return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
     }

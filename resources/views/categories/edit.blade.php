@@ -28,6 +28,17 @@
                     <p class="text-red-500">{{ $message }}</p>
                 @enderror
             </div>
+            <div class="mb-4">
+                <label for="type" class="block text-gray-700">Type:</label>
+                <select name="type" id="type" class="border p-2 w-1/2" required>
+                    <option value="" disabled>Select type</option>
+                    <option value="Book" {{ old('type', $category->type) == 'Book' ? 'selected' : '' }}>Book</option>
+                    <option value="Course" {{ old('type', $category->type) == 'Course' ? 'selected' : '' }}>Course</option>
+                </select>
+                @error('type')
+                    <p class="text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
             <div class="flex justify-start mt-1 gap-1"> 
             <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded-md">Update Category</button>
             <button class="bg-red-500 text-white px-4 py-2 rounded-md"><a href="/admin/categories">cancel</a></button>

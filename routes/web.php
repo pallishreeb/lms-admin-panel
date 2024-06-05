@@ -108,6 +108,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     // transactions
    Route::get('/admin/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+   Route::put('/analog-payment/{id}/update-status', [TransactionController::class, 'updateStatus'])->name('admin.payments.updateStatus');
 });
 
 

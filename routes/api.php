@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\VideoController;
+use App\Http\Controllers\Api\AnalogPaymentController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -37,6 +38,10 @@ Route::post('/profile/change-password',[ProfileController::class,'change_passwor
 Route::post('/profile/update-profile',[ProfileController::class,'update_profile'])->middleware('auth:sanctum');
 
 Route::get('/categories', [CategoryController::class, 'allCategories']);
+Route::get('/categories/book', [CategoryController::class, 'getBooks']);
+Route::get('/categories/course', [CategoryController::class, 'getCourses']);
+Route::get('/categories/search-book', [CategoryController::class, 'searchByName']);
+Route::get('/categories/search-course', [CategoryController::class, 'searchCourseByName']);
 Route::get('/books', [BookController::class, 'getBooks']);
 Route::get('/book/{id}', [BookController::class, 'getBookDetails']);
 Route::get('/search', [BookController::class,'search']);
@@ -91,3 +96,6 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('books/{bookId}/videos', [VideoController::class, 'getVideosForBook']);
 Route::get('/videos/{videoId}/comments-replies',[VideoController::class, 'getCommentsWithReplies']);
 Route::post('/videos/details', [VideoController::class, 'getVideoDetails']);
+
+//payment
+Route::post('/analog-payment', [AnalogPaymentController::class, 'store']);

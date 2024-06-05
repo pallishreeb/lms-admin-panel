@@ -124,6 +124,9 @@ public function authenticate(Request $request) {
     ]);
 
     if(auth()->attempt($formFields)) {
+        // Store the user ID in the session to track admin login
+        $request->session()->put('admin_user_id', auth()->user()->id);
+
         $request->session()->regenerate();
 
         return redirect('/')->with('message', 'You are now logged in!');
@@ -213,5 +216,25 @@ public function destroy(User $user)
         $user->update($data);
 
         return redirect()->route('users.edit-user', $user->id)->with('success', 'User updated successfully.');
+    }
+
+    public function loggedInAdmins()
+    {
+        $loggedInAdmins = [];
+
+        // Loop through all active sessions
+        foreach (session()->all() as $key => $value) {
+            // Check if the session key corresponds to an admin session
+            if (strpos($key, 'admin_user_id') === 0) {
+                // Extract admin user ID from session key
+                $adminUserId = str_replace('admin_user_id_', '', $key);
+
+                // Retrieve admin user by ID and add to the list
+                $loggedInAdmins[] = User::find($adminUserId);
+            }
+        }
+
+        // Return the list of logged-in admin users
+        return view('admin.dashboard', compact('loggedInAdmins'));
     }
 }

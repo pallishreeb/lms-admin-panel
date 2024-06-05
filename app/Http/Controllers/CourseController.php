@@ -26,7 +26,7 @@ class CourseController extends Controller
 
     public function create()
     {
-        $categories = Category::all();
+        $categories = Category::where('type', 'Course')->get();
         return view('courses.create',  ['categories' => $categories]);
     }
 
@@ -76,7 +76,7 @@ class CourseController extends Controller
     public function edit(Course $course)
     {
         // You may need to load categories here if needed
-        $categories = Category::all();
+        $categories = Category::where('type', 'Course')->get();
         return view('courses.edit', compact('course', 'categories'));
         //return view('courses.edit', compact('course'));
     }

@@ -29,4 +29,11 @@
             <p class="text-gray-700 text-2xl">{{$coursesCount}}</p>
         </div>
     </div>
+    {{-- <h1>Logged-in Admin Users</h1>
+
+    <ul>
+        @foreach($loggedInAdmins as $adminUser)
+            <li>{{ $adminUser->name }} - {{ $adminUser->email }}</li>
+        @endforeach
+    </ul> --}}
 @endsection

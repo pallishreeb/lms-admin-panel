@@ -27,6 +27,7 @@
                     <tr>
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">ID</th>
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                        <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Type</th>
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Image</th>
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
@@ -36,6 +37,7 @@
                         <tr>
                             <td class="px-6 py-4 whitespace-no-wrap">{{ $category->id }}</td>
                             <td class="px-6 py-4 whitespace-no-wrap">{{ $category->name }}</td>
+                            <td class="px-6 py-4 whitespace-no-wrap">{{ $category->type }}</td>
                             <td class="px-6 py-4 whitespace-no-wrap">
                                 @if($category->image)
                                     <img src="{{ asset('category_images/' . $category->image) }}" alt="{{ $category->name }}" class="w-10 h-10 object-cover rounded-full">

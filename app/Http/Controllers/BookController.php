@@ -26,7 +26,7 @@ class BookController extends Controller
 
     public function create()
     {
-        $categories = Category::all();
+        $categories = Category::where('type', 'Book')->get();
         return view('books.create', ['categories' => $categories]);
     }
 
@@ -87,7 +87,7 @@ class BookController extends Controller
     public function edit(Book $book)
     {
         
-        $categories = Category::all();
+        Category::where('type', 'Book')->get();
         return view('books.edit', ['book' => $book, 'categories' => $categories]);
     }
 
