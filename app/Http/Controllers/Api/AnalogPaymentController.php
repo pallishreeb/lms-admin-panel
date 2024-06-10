@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\AnalogPayment;
+use App\Models\PaymentMethod;
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
 
@@ -24,6 +26,7 @@ class AnalogPaymentController extends Controller
             'mobile_number' => 'required|string',
             'user_id' => 'required|exists:users,id',
             'category_id' => 'required|exists:categories,id',
+            'payment_method' => 'nullable|string',
         ]);
 
            // Check if the current date is before or on 31st December
@@ -45,5 +48,27 @@ class AnalogPaymentController extends Controller
         AnalogPayment::create($validatedData);
 
         return response()->json(['message' => 'Payment details submitted successfully'], 201);
+    }
+
+        // Get all payment methods
+    public function getAllPaymentMethods()
+    {
+        $paymentMethods = PaymentMethod::all();
+
+        return response()->json($paymentMethods);
+    }
+
+    // Get all analog payments for a particular user by user id
+    public function getAnalogPaymentsByUserId($userId)
+    {
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        $analogPayments = AnalogPayment::where('user_id', $userId)->get();
+
+        return response()->json($analogPayments);
     }
 }

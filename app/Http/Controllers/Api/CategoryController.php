@@ -60,4 +60,28 @@ class CategoryController extends Controller
    
            return response()->json($courses);
        }
+
+    // Method to search incomplete and completed books by category_id
+    public function booksByCategoryId(Request $request, $category_id)
+    {
+        
+        // Find all incomplete books that belong to the specified category ID
+        $incomplete_books = Book::where('category_id', $category_id)
+                                ->where('status', 'Incomplete')
+                                ->get();
+
+        // Find all completed books that belong to the specified category ID
+        $completed_books = Book::where('category_id', $category_id)
+                                ->where('status', 'Completed')
+                                ->get();
+
+        // Construct the API response
+        $response = [
+            'incomplete_books' => $incomplete_books,
+            'completed_books' => $completed_books
+        ];
+
+        // Return the response as JSON
+        return response()->json($response);
+    }
 }

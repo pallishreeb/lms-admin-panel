@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\VideoController;
 use App\Http\Controllers\Api\AnalogPaymentController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -42,6 +43,7 @@ Route::get('/categories/book', [CategoryController::class, 'getBooks']);
 Route::get('/categories/course', [CategoryController::class, 'getCourses']);
 Route::get('/categories/search-book', [CategoryController::class, 'searchByName']);
 Route::get('/categories/search-course', [CategoryController::class, 'searchCourseByName']);
+Route::get('/booksByCategory/{category_id}', [CategoryController::class, 'booksByCategoryId']);
 Route::get('/books', [BookController::class, 'getBooks']);
 Route::get('/book/{id}', [BookController::class, 'getBookDetails']);
 Route::get('/search', [BookController::class,'search']);
@@ -99,3 +101,9 @@ Route::post('/videos/details', [VideoController::class, 'getVideoDetails']);
 
 //payment
 Route::post('/analog-payment', [AnalogPaymentController::class, 'store']);
+// Route to get all payment methods
+Route::get('/payment-methods', [AnalogPaymentController::class, 'getAllPaymentMethods']);
+
+// Route to get all analog payments for a particular user by user id
+Route::get('/analog-payments/user/{userId}', [AnalogPaymentController::class, 'getAnalogPaymentsByUserId']);
+

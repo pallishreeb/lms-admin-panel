@@ -20,7 +20,8 @@ class TransactionController extends Controller
         
         
         // Retrieve all payments
-        $payments = AnalogPayment::all();
+        // $payments = AnalogPayment::all();
+        $payments = AnalogPayment::paginate(6);
 
         // Return view with payments data
         return view('transactions.index', ['payments' => $payments,'transactions' => $transactions]);
@@ -42,5 +43,16 @@ class TransactionController extends Controller
 
         // Redirect back with success message
         return redirect()->back()->with('success', 'Payment status updated successfully.');
+    }
+    public function destroy($id)
+    {
+        // Find the payment by ID
+        $payment = AnalogPayment::findOrFail($id);
+
+        // Delete the payment
+        $payment->delete();
+
+        // Redirect back with success message
+        return redirect()->back()->with('success', 'Analog payment deleted successfully.');
     }
 }

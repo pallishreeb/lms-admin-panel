@@ -32,6 +32,7 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'type' => 'required|in:Book,Course',
+            'price' => 'nullable|numeric', 
         ]);
 
         // Check for unique combination of name and type
@@ -73,6 +74,7 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'type' => 'required|in:Book,Course',
+            'price' => 'nullable|numeric', 
         ]);
 
         // Check for unique combination of name and type, excluding the current category

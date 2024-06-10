@@ -44,10 +44,11 @@ class BookController extends Controller
             'category_id' => 'required|exists:categories,id',
             'is_published' => 'required|boolean',
             'is_free' => 'required|boolean',
+            'status' => 'required',
         ]);
 
         $book = new Book($request->only([
-            'title', 'description', 'language', 'price', 'pages', 'category_id', 'is_published', 'is_free'
+            'title', 'description', 'language', 'price', 'pages', 'category_id', 'is_published', 'is_free','status'
         ]));
 
         // Upload cover picture
@@ -87,7 +88,7 @@ class BookController extends Controller
     public function edit(Book $book)
     {
         
-        Category::where('type', 'Book')->get();
+        $categories = Category::where('type', 'Book')->get();
         return view('books.edit', ['book' => $book, 'categories' => $categories]);
     }
 
@@ -104,10 +105,11 @@ class BookController extends Controller
             'category_id' => 'required|exists:categories,id',
             'is_published' => 'required|boolean',
             'is_free' => 'required|boolean',
+            'status' => 'required',
         ]);
 
         $book->fill($request->only([
-            'title', 'description', 'language', 'price', 'pages', 'category_id', 'is_published','is_free'
+            'title', 'description', 'language', 'price', 'pages', 'category_id', 'is_published','is_free','status'
         ]));
 
         // Update cover picture

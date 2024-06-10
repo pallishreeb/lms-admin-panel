@@ -13,6 +13,7 @@ use App\Http\Controllers\AppConfigController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\PaymentMethodController;
 
 Route::get('/admin/config', [AppConfigController::class, 'index'])->name('admin.config');
 Route::post('/admin/update-notification-preference', [AppConfigController::class, 'updateNotificationPreference'])->name('admin.updateNotificationPreference');
@@ -109,6 +110,7 @@ Route::middleware(['auth'])->group(function () {
     // transactions
    Route::get('/admin/transactions', [TransactionController::class, 'index'])->name('transactions.index');
    Route::put('/analog-payment/{id}/update-status', [TransactionController::class, 'updateStatus'])->name('admin.payments.updateStatus');
+   Route::delete('/payments/{id}', [TransactionController::class, 'destroy'])->name('payments.destroy');
 });
 
 
@@ -135,3 +137,26 @@ Route::post('/upload/pdf', [VideoController::class, 'uploadPdf'])->name('book.vi
 Route::get('/admin/comments', [VideoController::class, 'comments'])->name('admin.comments');
 Route::delete('/comments/{comment}', [VideoController::class, 'destroyComment'])->name('admin.comments.destroy');
 Route::delete('/replies/{reply}', [VideoController::class, 'destroyReply'])->name('admin.replies.destroy');
+
+
+// Index route - to list all payment details
+Route::get('/admin/payment_details', [PaymentMethodController::class, 'index'])->name('payment_details.index');
+
+// Create route - to show the form for creating a new payment detail
+Route::get('/admin/payment_details/create', [PaymentMethodController::class, 'create'])->name('payment_details.create');
+
+// Store route - to store a newly created payment detail
+Route::post('/admin/payment_details', [PaymentMethodController::class, 'store'])->name('payment_details.store');
+
+// Show route - to display a specific payment detail (optional, if needed)
+// Route::get('/admin/payment_details/{payment_detail}', [PaymentMethodController::class, 'show'])->name('payment_details.show');
+
+// Edit route - to show the form for editing an existing payment detail
+Route::get('/admin/payment_details/{payment_detail}/edit', [PaymentMethodController::class, 'edit'])->name('payment_details.edit');
+
+// Update route - to update a specific payment detail
+Route::put('/admin/payment_details/{payment_detail}', [PaymentMethodController::class, 'update'])->name('payment_details.update');
+
+// Destroy route - to delete a specific payment detail
+Route::delete('/admin/payment_details/{payment_detail}', [PaymentMethodController::class, 'destroy'])->name('payment_details.destroy');
+

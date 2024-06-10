@@ -33,8 +33,9 @@
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Pdf-Book</th>
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Price</th>
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Pages</th>
-                        <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Published</th>
-                        <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Is Free</th>
+                        <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Is Complete</th>
+                        {{-- <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Published</th> --}}
+                        {{-- <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Is Free</th> --}}
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
@@ -55,8 +56,9 @@
                                  <a href="{{ $book->pdf_book }}" target="_blank" class="text-blue-500 hover:underline">view</a></td>
                             <td class="px-6 py-4 whitespace-no-wrappy-2 px-4 border-b">{{ $book->price }}</td>
                             <td class="px-6 py-4 whitespace-no-wrap">{{ $book->pages }}</td>
-                            <td class="px-6 py-4 whitespace-no-wrap">{{ $book->is_published ? 'Yes' : 'No' }}</td>
-                            <td class="px-6 py-4 whitespace-no-wrap">{{ $book->is_free ? 'Yes' : 'No' }}</td>
+                            <td class="px-6 py-4 whitespace-no-wrap">{{$book->status === "Incomplete" ? 'Incomplete' : 'Completed' }}</td>
+                            {{-- <td class="px-6 py-4 whitespace-no-wrap">{{ $book->is_published ? 'Yes' : 'No' }}</td> --}}
+                            {{-- <td class="px-6 py-4 whitespace-no-wrap">{{ $book->is_free ? 'Yes' : 'No' }}</td> --}}
                             <td class="px-6 py-4 whitespace-no-wrap">
                                 <a href="{{ route('books.edit', ['book' => $book->id]) }}" class="text-yellow-500 hover:underline mr-2"><i class="fas fa-edit"></i>Edit</a>
                                 <form action="{{ route('books.destroy', ['book' => $book->id]) }}" method="post" class="inline" onsubmit="return confirmDelete(event)">

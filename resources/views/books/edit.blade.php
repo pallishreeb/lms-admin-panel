@@ -97,6 +97,14 @@
                     <label for="language" class="block text-sm font-medium text-gray-600">Language</label>
                     <input type="text" name="language" id="language" value="{{ $book->language }}" class="mt-1 p-2 border rounded-md w-full">
                 </div>
+                <!-- Status -->
+                <div class="mb-4">
+                    <label for="status" class="block text-sm font-medium text-gray-600">Status</label>
+                    <select name="status" id="status" class="mt-1 p-2 border rounded-md w-full">
+                        <option value="Incomplete" {{ $book->status === "Incomplete" ? 'selected' : '' }}>Incomplete</option>
+                        <option value="Completed" {{ $book->status === "Completed" ? 'selected' : '' }}>Completed</option>
+                    </select>
+                </div>
 
                 <!-- Is Published -->
                 <div class="mb-4">

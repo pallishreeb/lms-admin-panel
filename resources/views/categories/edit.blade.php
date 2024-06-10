@@ -39,6 +39,13 @@
                     <p class="text-red-500">{{ $message }}</p>
                 @enderror
             </div>
+            <div class="mb-4">
+                <label for="price" class="block text-gray-700">Price:</label>
+                <input type="number" step="0.01" name="price" id="price" class="border p-2 w-1/2" value="{{ old('price', $category->price) }}" required>
+                @error('price')
+                    <p class="text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
             <div class="flex justify-start mt-1 gap-1"> 
             <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded-md">Update Category</button>
             <button class="bg-red-500 text-white px-4 py-2 rounded-md"><a href="/admin/categories">cancel</a></button>

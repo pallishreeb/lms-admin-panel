@@ -96,4 +96,5 @@ class BookController extends Controller
         return response()->json(['books' => $books, 'courses' => $courses]);
     }
 
+    
 }

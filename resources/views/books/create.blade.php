@@ -20,13 +20,13 @@
         <!-- Title -->
         <div class="mb-4">
             <label for="title" class="block text-sm font-medium text-gray-600">Title</label>
-            <input type="text" name="title" id="title" class="mt-1 p-2 border rounded-md w-full">
+            <input type="text" name="title" id="title" class="mt-1 p-2 border rounded-md w-full" required>
         </div>
 
         <!-- Category -->
         <div class="mb-4">
             <label for="category_id" class="block text-sm font-medium text-gray-600">Category</label>
-            <select name="category_id" id="category_id" class="mt-1 p-2 border rounded-md w-full">
+            <select name="category_id" id="category_id" class="mt-1 p-2 border rounded-md w-full" required>
                 @foreach($categories as $category)
                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                 @endforeach
@@ -70,13 +70,20 @@
         <!-- Cover Picture -->
         <div class="mb-4">
             <label for="cover_pic" class="block text-sm font-medium text-gray-600">Cover Picture</label>
-            <input type="file" name="cover_pic" id="cover_pic" class="mt-1 p-2 border rounded-md w-full">
+            <input type="file" name="cover_pic" id="cover_pic" class="mt-1 p-2 border rounded-md w-full" required accept="image/*">
         </div>
-
+        <!-- Status -->
+        <div class="mb-4">
+            <label for="status" class="block text-sm font-medium text-gray-600">Status</label>
+            <select name="status" id="status" class="mt-1 p-2 border rounded-md w-full">
+                <option value="Incomplete">Incomplete</option>
+                <option value="Completed">Completed</option>
+            </select>
+        </div>
         <!-- Attachment -->
         <div class="mb-4">
             <label for="attachment" class="block text-sm font-medium text-gray-600">Attachment</label>
-            <input type="file" name="pdf_book" id="pdf_book" class="mt-1 p-2 border rounded-md w-full">
+            <input type="file" name="pdf_book" id="pdf_book" class="mt-1 p-2 border rounded-md w-full" required accept="application/pdf">
             <progress id="progressBarPdf" value="0" max="100" class="w-full" style="display: none;"></progress>
             <div id="loadingIndicatorPdf" style="display: none;">Uploading...</div>
             <input type="text" id="attachmentUrl" style="display: none;" name="attachmentUrl">
