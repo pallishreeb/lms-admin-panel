@@ -5,26 +5,67 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\AnalogPayment;
+use App\Models\PaymentMethod;
+use App\Models\Category;
+use App\Models\User;
 
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-                // Dummy transaction data
-                $transactions = [
-                    ['user' => 'John Doe', 'order' => 'Order #123', 'product' => 'Product A', 'amount' => 50.00],
-                    ['user' => 'Jane Smith', 'order' => 'Order #124', 'product' => 'Product B', 'amount' => 75.50],
-                    ['user' => 'Bob Johnson', 'order' => 'Order #125', 'product' => 'Product C', 'amount' => 30.25],
-                    ['user' => 'Alice Brown', 'order' => 'Order #126', 'product' => 'Product D', 'amount' => 90.00],
-                ];
-        
-        
-        // Retrieve all payments
-        // $payments = AnalogPayment::all();
-        $payments = AnalogPayment::paginate(6);
+        // Get all data initially
+        $query = AnalogPayment::query();
 
-        // Return view with payments data
-        return view('transactions.index', ['payments' => $payments,'transactions' => $transactions]);
+        // Add filters here if needed
+        if ($request->filled('student_id')) {
+            $query->where('user_id', $request->student_id);
+        }
+
+        if ($request->filled('division')) {
+            $query->where('division', 'like', '%' . $request->division . '%');
+        }
+
+        if ($request->filled('district')) {
+            $query->where('district', 'like', '%' . $request->district . '%');
+        }
+
+        if ($request->filled('upazila')) {
+            $query->where('upazila', 'like', '%' . $request->upazila . '%');
+        }
+
+        if ($request->filled('school_name')) {
+            $query->where('school_name', 'like', '%' . $request->school_name . '%');
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->filled('payment_method')) {
+            $query->where('payment_method', 'like', '%' . $request->payment_method . '%');
+        }
+
+        if ($request->filled('amount')) {
+            $query->where('amount', $request->amount);
+        }
+
+        if ($request->filled('payment_date')) {
+            $query->whereDate('created_at', $request->payment_date);
+        }
+
+        if ($request->filled('payment_status')) {
+            $query->where('status', $request->payment_status);
+        }
+
+        // Fetch data
+        $paymentDetails = $query->paginate(10); // 10 items per page
+
+        // Retrieve students and classes for the drop-downs
+        $students = User::all(); // Assuming User model represents students
+        $classes = Category::all(); // Assuming Category model represents classes
+        $paymentMethods = PaymentMethod::all();
+        return view('transactions.index', compact('paymentDetails', 'students', 'classes','paymentMethods'));
+    
     }
 
     public function updateStatus(Request $request, $id)

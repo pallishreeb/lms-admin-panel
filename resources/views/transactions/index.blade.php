@@ -1,92 +1,158 @@
-<!-- resources/views/analog_payments/index.blade.php -->
 @extends('layouts.app')
 
 @section('content')
-{{-- <button class="bg-yellow-500 text-white px-4 py-2 rounded-md mb-2">Digital Payments List</button>
-    <table class="min-w-full bg-white border border-gray-300">
-        <thead>
-            <tr>
-                <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">User</th>
-                <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Transaction ID</th>
-                <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Transcation Date</th>
-                <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Contact Number</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($transactions as $transaction)
-                <tr class="border-b">
-                    <td class="px-6 py-4 whitespace-no-wrap">{{ $transaction['user'] }}</td>
-                    <td class="px-6 py-4 whitespace-no-wrap">{{ $transaction['order'] }}</td>
-                    <td class="px-6 py-4 whitespace-no-wrap">10-06-2024</td>
-                    <td class="px-6 py-4 whitespace-no-wrap">{{ $transaction['amount'] }}</td>
-                    <td class="px-6 py-4 whitespace-no-wrap">{{ $transaction['product'] }}</td>
-                    <td class="px-6 py-4 whitespace-no-wrap">9876772347</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table> --}}
+    <div class="mt-2">
 
-    <button class="bg-yellow-500 text-white px-4 py-2 rounded-md mb-2 mt-2">Analog Payments List</button>
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-xl font-semibold">Filter Payment</h1>
+        </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        @foreach($payments as $payment)
-            <div class="border rounded-lg overflow-hidden shadow-md">
-                <img src="{{$payment->payment_screenshot}}" alt="Payment Screenshot" class="w-full h-40  object-cover object-center">
-                <div class="p-2">
-                    <p><strong>Payment Number:</strong>{{ $payment->payment_number }}</p>
-                    <p><strong>Division:</strong> {{ $payment->division }}, <strong>District:</strong> {{ $payment->district }}</p>
-                    <p><strong>Upazilla:</strong> {{ $payment->upazilla }}</p>
-                    <p><strong>School Name:</strong> {{ $payment->school_name }}</p>
-                    <p><strong>Class:</strong> {{ $payment->class }}</p>
-                    <p><strong>Student Name:</strong> {{ $payment->student_name }}, Mobile Number:</strong> {{ $payment->mobile_number }}</p>
-                    <p><strong>Status:</strong> {{ $payment->status }}, <strong>Amount:</strong> {{ $payment->amount }}</p>
-                    <div class="flex justify-between">
-                    <form action="{{ route('admin.payments.updateStatus', $payment->id) }}" method="post" class="mt-1">
+        <!-- Filter Form -->
+        <form action="{{ route('transactions.index') }}" method="get" class="mb-4">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <select name="student_id" class="border p-2">
+                    <option value="">Select Student</option>
+                    @foreach($students as $student)
+                        <option value="{{ $student->id }}" {{ request('student_id') == $student->id ? 'selected' : '' }}>{{ $student->name }}</option>
+                    @endforeach
+                </select>
 
-                        @csrf
-                        @method('put')
-                        {{-- <label for="status" class="block mb-1">Update Status:</label> --}}
-                        <select name="status" id="status" class="border border-gray-300 rounded-md p-1">
-                            <option value="">Select Status</option>
-                            <option value="approved">Approve</option>
-                            <option value="rejected">Reject</option>
-                        </select>
-                        <button type="submit" class="bg-green-600 text-white px-4 py-1 mt-1 rounded-md">Update Status</button>
-                    </form>
-                      <!-- Delete Button -->
-                    <form action="{{ route('payments.destroy', $payment->id) }}" method="POST" class="mt-1"  onsubmit="return confirmDelete(event)">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="bg-red-600 text-white px-4 py-1 mt-1 rounded-md">Delete</button>
-                    </form>
-                </div>
-                </div>
+                <select name="category_id" class="border p-2">
+                    <option value="">Select Class</option>
+                    @foreach($classes as $class)
+                        <option value="{{ $class->id }}" {{ request('category_id') == $class->id ? 'selected' : '' }}>{{ $class->name }}</option>
+                    @endforeach
+                </select>
+
+                <input type="date" name="payment_date" placeholder="Payment Date" value="{{ request('payment_date') }}" class="border p-2">
+
+                <select name="payment_status" class="border p-2">
+                    <option value="">Select Status</option>
+                    <option value="pending" {{ request('payment_status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="approved" {{ request('payment_status') == 'approved' ? 'selected' : '' }}>Approved</option>
+                    <option value="rejected" {{ request('payment_status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                </select>
+                <select name="payment_method" class="border p-2">
+                    <option value="">Select Payment Method</option>
+                    @foreach($paymentMethods as $paymentMethod)
+                        <option value="{{ $paymentMethod->payment_method }}" {{ request('payment_method') == $paymentMethod->payment_method ? 'selected' : '' }}>{{ $paymentMethod->payment_method }}</option>
+                    @endforeach
+                </select>
+                <input type="text" name="division" placeholder="Division" value="{{ request('division') }}" class="border p-2">
+                <input type="text" name="district" placeholder="District" value="{{ request('district') }}" class="border p-2">
+                <input type="text" name="upazila" placeholder="Upazila" value="{{ request('upazila') }}" class="border p-2">
+                <input type="text" name="school_name" placeholder="School Name" value="{{ request('school_name') }}" class="border p-2">
+                <input type="number" name="amount" placeholder="Payment Amount" value="{{ request('amount') }}" class="border p-2">
+                
             </div>
-        @endforeach
+            <div>
+                <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Filter</button>
+                <a href="{{ route('transactions.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded-md">Clear</a>
+            </div>
+        </form>
+
+        <button class="bg-yellow-500 text-white px-4 py-2 rounded-md mb-2 mt-2">Analog Payments List</button>
+        <table class="mt-4 w-full border-collapse border border-gray-300">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="border border-gray-300 px-4 py-2">ID</th>
+                    <th class="border border-gray-300 px-4 py-2">Payment Screenshot</th>
+                    <th class="border border-gray-300 px-8 py-2">Student Name</th>
+                    {{-- <th class="border border-gray-300 px-8 py-2">Student Email</th> --}}
+                    <th class="border border-gray-300 px-8 py-2">Mobile Number</th>
+                    <th class="border border-gray-300 px-4 py-2">Class</th>
+                    <th class="border border-gray-300 px-4 py-2">Payment Method</th>
+                    <th class="border border-gray-300 px-4 py-2">Amount</th>
+                    <th class="border border-gray-300 px-4 py-2">Payment Date</th>
+                    <th class="border border-gray-300 px-4 py-2">Payment Time</th>
+                    <th class="border border-gray-300 px-4 py-2">Division</th>
+                    <th class="border border-gray-300 px-4 py-2">District</th>
+                    <th class="border border-gray-300 px-4 py-2">Upazila</th>
+                    <th class="border border-gray-300 px-8 py-2">School Name</th>                   
+                    <th class="border border-gray-300 px-4 py-2">Status</th>
+                  
+                    <th class="border border-gray-300 px-4 py-2">Update Status</th>
+                    <th class="border border-gray-300 px-4 py-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($paymentDetails as $paymentDetail)
+                    <tr class="hover:bg-gray-100">
+                        <td class="border border-gray-300 px-4 py-2">{{ $paymentDetail->id }}</td>
+                        <td class="border border-gray-300 px-4 py-2">
+                            @if ($paymentDetail->payment_screenshot)
+                            <a href="{{ $paymentDetail->payment_screenshot }}" target="_blank">
+                                <img src="{{ $paymentDetail->payment_screenshot }}" alt="Screenshot" class="w-20 h-20 object-cover">
+                            </a>
+                            @else
+                                <span class="text-gray-500">NA</span>
+                           @endif
+                        </td>
+                        <td class="border border-gray-300 px-1 py-2">{{ $paymentDetail->student->name ?? 'NA'}}</td>
+                        {{-- <td class="border border-gray-300 px-1 py-2">{{ $paymentDetail->student->email ?? 'NA'}}</td>  --}}
+                        <td class="border border-gray-300 px-1 py-2">{{ $paymentDetail->mobile_number ?? 'NA'}}</td>
+                        <td class="border border-gray-300 px-1 py-2">{{ $paymentDetail->category->name ?? 'NA'}}</td> 
+                        <td class="border border-gray-300 px-1 py-2">{{ $paymentDetail->payment_method ?? 'NA'}}</td>
+                        <td class="border border-gray-300 px-4 py-2">{{ $paymentDetail->amount ?? 'NA' }}</td>
+                        <td class="border border-gray-300 px-2 py-2">{{ $paymentDetail->created_at->format('Y-m-d') }}</td>
+                        <td class="border border-gray-300 px-4 py-2">{{ $paymentDetail->created_at->format('H:i:s') }}</td>
+                        <td class="border border-gray-300 px-4 py-2">{{ $paymentDetail->division ?? 'NA' }}</td>
+                        <td class="border border-gray-300 px-4 py-2">{{ $paymentDetail->district ?? 'NA' }}</td>
+                        <td class="border border-gray-300 px-4 py-2">{{ $paymentDetail->upazila  ?? 'NA' }}</td>
+                        <td class="border border-gray-300 px-4 py-2">{{ $paymentDetail->school_name ?? 'NA'}}</td>
+                        <td class="border border-gray-300 px-4 py-2">{{ $paymentDetail->status }}</td>
+                      
+                        <td class="border border-gray-300 px-2 py-2">
+                            <!-- Form to update status -->
+                            <form action="{{ route('admin.payments.updateStatus', $paymentDetail->id) }}" method="post" class="flex flex-col">
+                                @csrf
+                                @method('put')
+                                <select name="status" class="border border-gray-300 rounded-md p-1">
+                                    <option value="">Select Status</option>
+                                    <option value="approved">Approve</option>
+                                    <option value="rejected">Reject</option>
+                                </select>
+                                <button type="submit" class="bg-indigo-600 text-white px-4 py-1 mt-1 rounded-md">Update</button>
+                            </form>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-2">
+                            <form action="{{ route('payments.destroy', $paymentDetail->id) }}" method="POST" onsubmit="return confirmDelete(event)" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-500 hover:underline">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="13" class="border border-gray-300 px-4 py-2 text-center">No payment details found.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+        <!-- Pagination Links -->
+        <div class="mt-4">
+            {{ $paymentDetails->links() }}
+        </div>
     </div>
-    <!-- Pagination Links -->
-{{ $payments->links() }}
-<script>
-    function confirmDelete(event) {
-        event.preventDefault(); // Prevent the default behavior of the form submission
-
-        Swal.fire({
-            title: 'Are you sure?',
-            text: 'You won\'t be able to revert this!',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // If the user confirms, submit the form
-                event.target.submit();
-            }
-        });
-    }
-</script>
+    <script>
+        function confirmDelete(event) {
+            event.preventDefault(); // Prevent the default behavior of the form submission
+    
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You won\'t be able to revert this!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If the user confirms, submit the form
+                    event.target.submit();
+                }
+            });
+        }
+    </script>
 @endsection
-

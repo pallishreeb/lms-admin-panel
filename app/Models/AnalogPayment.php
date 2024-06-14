@@ -20,6 +20,20 @@ class AnalogPayment extends Model
         'mobile_number',
         'user_id',
         'category_id',
-        'status'
+        'status',
+        'amount',
+        'payment_method',
+
     ];
+        // Define the relationship with the User model (for students)
+        public function student()
+        {
+            return $this->belongsTo(User::class, 'user_id');
+        }
+    
+        // Define the relationship with the Category model (for classes)
+        public function category()
+        {
+            return $this->belongsTo(Category::class, 'category_id');
+        }
 }
