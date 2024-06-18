@@ -38,16 +38,42 @@
                         <option value="{{ $paymentMethod->payment_method }}" {{ request('payment_method') == $paymentMethod->payment_method ? 'selected' : '' }}>{{ $paymentMethod->payment_method }}</option>
                     @endforeach
                 </select>
-                <input type="text" name="division" placeholder="Division" value="{{ request('division') }}" class="border p-2">
+                {{-- <input type="text" name="division" placeholder="Division" value="{{ request('division') }}" class="border p-2">
                 <input type="text" name="district" placeholder="District" value="{{ request('district') }}" class="border p-2">
-                <input type="text" name="upazila" placeholder="Upazila" value="{{ request('upazila') }}" class="border p-2">
+                <input type="text" name="upazila" placeholder="Upazila" value="{{ request('upazila') }}" class="border p-2"> --}}
+                <!-- Division Dropdown -->
+        <div>
+            <label for="division">Division</label>
+            <select name="division" id="division" class="border border-gray-300 rounded-md p-1 w-full">
+                <option value="">Select Division</option>
+                @foreach($divisions as $division)
+                    <option value="{{ $division['division'] }}">{{ $division['division'] }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- District Dropdown -->
+        <div>
+            <label for="district">District(First select Division)</label>
+            <select name="district" id="district" class="border border-gray-300 rounded-md p-1 w-full" disabled>
+                <option value="">Select District</option>
+            </select>
+        </div>
+
+        <!-- Upazila Dropdown -->
+        <div>
+            <label for="upazila">Upazila(First select District)</label>
+            <select name="upazila" id="upazila" class="border border-gray-300 rounded-md p-1 w-full" disabled>
+                <option value="">Select Upazila</option>
+            </select>
+        </div>
                 <input type="text" name="school_name" placeholder="School Name" value="{{ request('school_name') }}" class="border p-2">
                 <input type="number" name="amount" placeholder="Payment Amount" value="{{ request('amount') }}" class="border p-2">
                 
             </div>
             <div>
                 <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Filter</button>
-                <a href="{{ route('transactions.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded-md">Clear</a>
+                <a href="{{ route('transactions.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded-md">Clear Filter</a>
             </div>
         </form>
 
@@ -98,7 +124,7 @@
                         <td class="border border-gray-300 px-4 py-2">{{ $paymentDetail->created_at->format('H:i:s') }}</td>
                         <td class="border border-gray-300 px-4 py-2">{{ $paymentDetail->division ?? 'NA' }}</td>
                         <td class="border border-gray-300 px-4 py-2">{{ $paymentDetail->district ?? 'NA' }}</td>
-                        <td class="border border-gray-300 px-4 py-2">{{ $paymentDetail->upazila  ?? 'NA' }}</td>
+                        <td class="border border-gray-300 px-4 py-2">{{ $paymentDetail->upazilla  ?? 'NA' }}</td>
                         <td class="border border-gray-300 px-4 py-2">{{ $paymentDetail->school_name ?? 'NA'}}</td>
                         <td class="border border-gray-300 px-4 py-2">{{ $paymentDetail->status }}</td>
                       
@@ -135,6 +161,58 @@
             {{ $paymentDetails->links() }}
         </div>
     </div>
+    <script>
+        document.getElementById('division').addEventListener('change', function() {
+            const division = this.value;
+            const districtSelect = document.getElementById('district');
+            const upazilaSelect = document.getElementById('upazila');
+        
+            if (division) {
+                fetch(`https://bdapis.com/api/v1.2/division/${division}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        districtSelect.disabled = false;
+                        districtSelect.innerHTML = '<option value="">Select District</option>';
+                        upazilaSelect.disabled = true;
+                        upazilaSelect.innerHTML = '<option value="">Select Upazila</option>';
+        
+                        data.data.forEach(district => {
+                            districtSelect.innerHTML += `<option value="${district.district}">${district.district}</option>`;
+                        });
+                    });
+            } else {
+                districtSelect.disabled = true;
+                districtSelect.innerHTML = '<option value="">Select District</option>';
+                upazilaSelect.disabled = true;
+                upazilaSelect.innerHTML = '<option value="">Select Upazila</option>';
+            }
+        });
+        
+        document.getElementById('district').addEventListener('change', function() {
+            const division = document.getElementById('division').value;
+            const district = this.value;
+            const upazilaSelect = document.getElementById('upazila');
+        
+            if (division && district) {
+                fetch(`https://bdapis.com/api/v1.2/division/${division}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const selectedDistrict = data.data.find(d => d.district === district);
+                        if (selectedDistrict) {
+                            upazilaSelect.disabled = false;
+                            upazilaSelect.innerHTML = '<option value="">Select Upazila</option>';
+        
+                            selectedDistrict.upazilla.forEach(upazila => {
+                                upazilaSelect.innerHTML += `<option value="${upazila}">${upazila}</option>`;
+                            });
+                        }
+                    });
+            } else {
+                upazilaSelect.disabled = true;
+                upazilaSelect.innerHTML = '<option value="">Select Upazila</option>';
+            }
+        });
+        </script>
     <script>
         function confirmDelete(event) {
             event.preventDefault(); // Prevent the default behavior of the form submission
