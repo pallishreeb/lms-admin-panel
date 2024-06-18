@@ -88,6 +88,7 @@
                     <th class="border border-gray-300 px-8 py-2">Mobile Number</th>
                     <th class="border border-gray-300 px-4 py-2">Class</th>
                     <th class="border border-gray-300 px-4 py-2">Payment Method</th>
+                    <th class="border border-gray-300 px-4 py-2">Payment Number</th>
                     <th class="border border-gray-300 px-4 py-2">Amount</th>
                     <th class="border border-gray-300 px-4 py-2">Payment Date</th>
                     <th class="border border-gray-300 px-4 py-2">Payment Time</th>
@@ -119,6 +120,7 @@
                         <td class="border border-gray-300 px-1 py-2">{{ $paymentDetail->mobile_number ?? 'NA'}}</td>
                         <td class="border border-gray-300 px-1 py-2">{{ $paymentDetail->category->name ?? 'NA'}}</td> 
                         <td class="border border-gray-300 px-1 py-2">{{ $paymentDetail->payment_method ?? 'NA'}}</td>
+                        <td class="border border-gray-300 px-1 py-2">{{ $paymentDetail->payment_number ?? 'NA'}}</td>
                         <td class="border border-gray-300 px-4 py-2">{{ $paymentDetail->amount ?? 'NA' }}</td>
                         <td class="border border-gray-300 px-2 py-2">{{ $paymentDetail->created_at->format('Y-m-d') }}</td>
                         <td class="border border-gray-300 px-4 py-2">{{ $paymentDetail->created_at->format('H:i:s') }}</td>
