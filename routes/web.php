@@ -15,15 +15,15 @@ use App\Http\Controllers\PdfController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\PaymentMethodController;
 
-Route::get('/admin/config', [AppConfigController::class, 'index'])->name('admin.config');
-Route::post('/admin/update-notification-preference', [AppConfigController::class, 'updateNotificationPreference'])->name('admin.updateNotificationPreference');
-Route::get('/admin/dashboard', [AppConfigController::class, 'dashboard'])->name('admin.dashboard');
+Route::get('/admin/config', [AppConfigController::class, 'index'])->name('admin.config')->middleware('auth');
+Route::post('/admin/update-notification-preference', [AppConfigController::class, 'updateNotificationPreference'])->name('admin.updateNotificationPreference')->middleware('auth');
+Route::get('/admin/dashboard', [AppConfigController::class, 'dashboard'])->name('admin.dashboard')->middleware('auth');
 
 //chat
-Route::get('/user-messages', [ChatMessageController::class, 'index'])->name('user-messages');
-Route::get('/user-chats/{user}', [ChatMessageController::class, 'showUserChats'])->name('user-chats');
-Route::post('/user-chats/{user}/reply', [ChatMessageController::class, 'reply'])->name('user-chats.reply');
-Route::delete('/delete-chat/{id}', [ChatMessageController::class, 'delete'])->name('delete-chat');
+Route::get('/user-messages', [ChatMessageController::class, 'index'])->name('user-messages')->middleware('auth');
+Route::get('/user-chats/{user}', [ChatMessageController::class, 'showUserChats'])->name('user-chats')->middleware('auth');
+Route::post('/user-chats/{user}/reply', [ChatMessageController::class, 'reply'])->name('user-chats.reply')->middleware('auth');
+Route::delete('/delete-chat/{id}', [ChatMessageController::class, 'delete'])->name('delete-chat')->middleware('auth');
 
 /*
 |--------------------------------------------------------------------------
@@ -111,52 +111,54 @@ Route::middleware(['auth'])->group(function () {
    Route::get('/admin/transactions', [TransactionController::class, 'index'])->name('transactions.index');
    Route::put('/analog-payment/{id}/update-status', [TransactionController::class, 'updateStatus'])->name('admin.payments.updateStatus');
    Route::delete('/payments/{id}', [TransactionController::class, 'destroy'])->name('payments.destroy');
+
+
+    Route::get('/pdf/getText/{id}', [PdfController::class, 'showPDF'])->name('books.show-pdf');
+
+
+    //video on book
+    // Route to show the video creation form
+    Route::get('/books/{bookId}/videos/create', [VideoController::class, 'create'])->name('videos.create');
+
+    // Route to store the newly created video
+    Route::post('/books/{bookId}/videos', [VideoController::class, 'store'])->name('videos.store');
+
+    // Route to show the video edit form
+    Route::get('/books/{bookId}/videos/{videoId}/edit', [VideoController::class, 'edit'])->name('videos.edit');
+
+    // Route to update the video
+    Route::put('/books/{bookId}/videos/{videoId}', [VideoController::class, 'update'])->name('videos.update');
+
+    // Route to delete the video
+    Route::delete('/books/{bookId}/videos/{videoId}', [VideoController::class, 'destroy'])->name('videos.destroy');
+    Route::post('/upload/video', [VideoController::class, 'upload'])->name('book.video');
+    Route::post('/upload/pdf', [VideoController::class, 'uploadPdf'])->name('book.video.pdf');
+    Route::get('/admin/comments', [VideoController::class, 'comments'])->name('admin.comments');
+    Route::delete('/comments/{comment}', [VideoController::class, 'destroyComment'])->name('admin.comments.destroy');
+    Route::delete('/replies/{reply}', [VideoController::class, 'destroyReply'])->name('admin.replies.destroy');
+
+
+    // Index route - to list all payment details
+    Route::get('/admin/payment_details', [PaymentMethodController::class, 'index'])->name('payment_details.index');
+
+    // Create route - to show the form for creating a new payment detail
+    Route::get('/admin/payment_details/create', [PaymentMethodController::class, 'create'])->name('payment_details.create');
+
+    // Store route - to store a newly created payment detail
+    Route::post('/admin/payment_details', [PaymentMethodController::class, 'store'])->name('payment_details.store');
+
+    // Show route - to display a specific payment detail (optional, if needed)
+    // Route::get('/admin/payment_details/{payment_detail}', [PaymentMethodController::class, 'show'])->name('payment_details.show');
+
+    // Edit route - to show the form for editing an existing payment detail
+    Route::get('/admin/payment_details/{payment_detail}/edit', [PaymentMethodController::class, 'edit'])->name('payment_details.edit');
+
+    // Update route - to update a specific payment detail
+    Route::put('/admin/payment_details/{payment_detail}', [PaymentMethodController::class, 'update'])->name('payment_details.update');
+
+    // Destroy route - to delete a specific payment detail
+    Route::delete('/admin/payment_details/{payment_detail}', [PaymentMethodController::class, 'destroy'])->name('payment_details.destroy');
+
+
 });
-
-
-Route::get('/pdf/getText/{id}', [PdfController::class, 'showPDF'])->name('books.show-pdf');
-
-
-//video on book
-// Route to show the video creation form
-Route::get('/books/{bookId}/videos/create', [VideoController::class, 'create'])->name('videos.create');
-
-// Route to store the newly created video
-Route::post('/books/{bookId}/videos', [VideoController::class, 'store'])->name('videos.store');
-
-// Route to show the video edit form
-Route::get('/books/{bookId}/videos/{videoId}/edit', [VideoController::class, 'edit'])->name('videos.edit');
-
-// Route to update the video
-Route::put('/books/{bookId}/videos/{videoId}', [VideoController::class, 'update'])->name('videos.update');
-
-// Route to delete the video
-Route::delete('/books/{bookId}/videos/{videoId}', [VideoController::class, 'destroy'])->name('videos.destroy');
-Route::post('/upload/video', [VideoController::class, 'upload'])->name('book.video');
-Route::post('/upload/pdf', [VideoController::class, 'uploadPdf'])->name('book.video.pdf');
-Route::get('/admin/comments', [VideoController::class, 'comments'])->name('admin.comments');
-Route::delete('/comments/{comment}', [VideoController::class, 'destroyComment'])->name('admin.comments.destroy');
-Route::delete('/replies/{reply}', [VideoController::class, 'destroyReply'])->name('admin.replies.destroy');
-
-
-// Index route - to list all payment details
-Route::get('/admin/payment_details', [PaymentMethodController::class, 'index'])->name('payment_details.index');
-
-// Create route - to show the form for creating a new payment detail
-Route::get('/admin/payment_details/create', [PaymentMethodController::class, 'create'])->name('payment_details.create');
-
-// Store route - to store a newly created payment detail
-Route::post('/admin/payment_details', [PaymentMethodController::class, 'store'])->name('payment_details.store');
-
-// Show route - to display a specific payment detail (optional, if needed)
-// Route::get('/admin/payment_details/{payment_detail}', [PaymentMethodController::class, 'show'])->name('payment_details.show');
-
-// Edit route - to show the form for editing an existing payment detail
-Route::get('/admin/payment_details/{payment_detail}/edit', [PaymentMethodController::class, 'edit'])->name('payment_details.edit');
-
-// Update route - to update a specific payment detail
-Route::put('/admin/payment_details/{payment_detail}', [PaymentMethodController::class, 'update'])->name('payment_details.update');
-
-// Destroy route - to delete a specific payment detail
-Route::delete('/admin/payment_details/{payment_detail}', [PaymentMethodController::class, 'destroy'])->name('payment_details.destroy');
 

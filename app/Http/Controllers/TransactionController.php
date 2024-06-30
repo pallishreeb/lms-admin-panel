@@ -57,7 +57,8 @@ class TransactionController extends Controller
         if ($request->filled('payment_status')) {
             $query->where('status', $request->payment_status);
         }
-    
+        // Order by created_at in descending order to get the latest records first
+        $query->orderBy('created_at', 'desc');
         // Fetch data
         $paymentDetails = $query->paginate(10); // 10 items per page
     
