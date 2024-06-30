@@ -14,8 +14,7 @@ return [
     */
 
     // 'default' => env('MAIL_MAILER', 'smtp'),
-    // 'driver' => env('MAIL_DRIVER', 'ses'),
-    'default' => env('MAIL_MAILER', 'sendgrid'),
+    'driver' => env('MAIL_DRIVER', 'ses'),
     /*
     |--------------------------------------------------------------------------
     | Mailer Configurations
@@ -35,10 +34,6 @@ return [
     */
 
     'mailers' => [
-        'sendgrid' => [
-            'transport' => 'sendgrid',
-            'api_key' => env('SENDGRID_API_KEY'),
-        ],
         'smtp' => [
             'transport' => 'smtp',
             'url' => env('MAIL_URL'),
@@ -116,8 +111,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('MAIL_FROM_ADDRESS', 'noreply@sohojpora.com'),
+        'name' => env('MAIL_FROM_NAME', 'Sohoj Pora'),
     ],
 
     /*

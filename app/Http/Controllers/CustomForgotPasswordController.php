@@ -49,8 +49,8 @@ class CustomForgotPasswordController extends Controller
                     return redirect()->route('password.request')->with('error', 'An error occurred while processing your request.');
                 }
             }
-          Mail::send('auth.forgotPassword', ['token' => $token], function($message) use($request){
-              $message->from('shreelearning.tech@gmail.com', 'Sahoj Pora');
+          Mail::mailer('ses')->send('auth.forgotPassword', ['token' => $token], function($message) use($request){
+              $message->from('pallishreebehera01@gmail.com', 'Sahoj Pora');
               $message->to($request->email);
               $message->subject('Reset Password');
           });

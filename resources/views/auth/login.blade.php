@@ -7,7 +7,7 @@
     <div class="flex mt-5  justify-center h-screen">
         <div class="w-1/2 max-w-md">
             <div class="bg-white rounded-lg shadow-md p-8">
-                <h1 class="text-2xl font-bold mb-6">Login</h1>
+                <h1 class="text-2xl font-bold mb-6 text-center">Sohoj Pora</h1>
 
                 <form method="POST" action="{{route('authenticate')}}" class="space-y-4">
                     @csrf
@@ -30,17 +30,17 @@
                     </div>
 
                     <div class="flex items-center justify-between">
-                        <label class="inline-flex items-center">
+                        {{-- <label class="inline-flex items-center">
                             <input type="checkbox" name="remember" class="form-checkbox" {{ old('remember') ? 'checked' : '' }}>
                             <span class="ml-2 text-sm">Remember me</span>
-                        </label>
+                        </label> --}}
 
                         <a href="{{route ('password.request')}}" class="text-blue-500 hover:underline">Forgot Password?</a>
                         <!-- <a href="{{route ('password.request')}}" class="text-blue-500 hover:underline">Forgot Password?</a> -->
                     </div>
-                    <div class="flex items-center justify-between">
+                    {{-- <div class="flex items-center justify-between">
                         <a href="{{ url('/register')}}" class="text-blue-500 hover:underline">Don't have an account? Register here.</a>
-                    </div>
+                    </div> --}}
                     <div>
                         <button type="submit" class="w-full bg-yellow-600 text-white p-2 rounded-md hover:bg-yellow-800"><i class="fas fa-sign-in mr-2"></i>Login</button>
                     </div>

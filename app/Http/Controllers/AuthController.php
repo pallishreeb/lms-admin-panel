@@ -9,6 +9,7 @@ use App\Mail\OtpMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 use Twilio\Rest\Client;
 class AuthController extends Controller
 {
@@ -117,16 +118,28 @@ public function login() {
   
 // }
 
-public function authenticate(Request $request) {
+public function authenticate(Request $request)
+{
     $formFields = $request->validate([
         'email' => ['required', 'email'],
         'password' => 'required'
     ]);
 
-    if(auth()->attempt($formFields)) {
+    if (auth()->attempt($formFields)) {
+        // Check if the authenticated user is an admin
+        if (auth()->user()->role !== 'admin') {
+            // Log the user out
+            auth()->logout();
+            // Invalidate the session
+            $request->session()->invalidate();
+            // Regenerate the session token
+            $request->session()->regenerateToken();
+            // Return with error message
+            return back()->withErrors(['email' => 'Access Denied: You do not have admin rights'])->onlyInput('email');
+        }
+
         // Store the user ID in the session to track admin login
         $request->session()->put('admin_user_id', auth()->user()->id);
-
         $request->session()->regenerate();
 
         return redirect('/')->with('message', 'You are now logged in!');
@@ -134,6 +147,7 @@ public function authenticate(Request $request) {
 
     return back()->withErrors(['email' => 'Invalid Credentials'])->onlyInput('email');
 }
+
 //verify otp form
 public function showOtpVerificationForm(Request $request)
 {
@@ -187,10 +201,30 @@ public function deleteConfirmation(User $user)
 }
 public function destroy(User $user)
 {
-  $user->delete();
+    // List of tables and their foreign key columns that reference the users table
+    $relatedTables = [
+        'comments' => 'user_id',
+        'replies' =>'user_id',
+        'analog_payments' =>'user_id',
+        'orders' => 'user_id',
+        'chat_messages'=>'user_id',
+        'likes_dislikes' => 'user_id'
+        // Add other related tables here
+    ];
 
-  return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
+    // Check if the user ID is present in any of the related tables
+    foreach ($relatedTables as $table => $column) {
+        if (DB::table($table)->where($column, $user->id)->exists()) {
+            return redirect()->route('admin.users.index')->with('error', 'User cannot be deleted as they have related records in the ' . $table . ' table.');
+        }
+    }
+
+    // If no related records found, delete the user
+    $user->delete();
+
+    return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
 }
+
   // Display the form for editing the specified user.
     public function editUser(User $user)
     {
