@@ -67,7 +67,8 @@ class AnalogPaymentController extends Controller
             return response()->json(['error' => 'User not found'], 404);
         }
 
-        $analogPayments = AnalogPayment::where('user_id', $userId)->get();
+        // $analogPayments = AnalogPayment::where('user_id', $userId)->get();
+        $analogPayments = AnalogPayment::where('user_id', $userId)->with('category')->get();
 
         return response()->json($analogPayments);
     }
