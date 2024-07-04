@@ -42,7 +42,7 @@
                             <td class="px-6 py-4 whitespace-no-wrap">{{ $category->price ?? 'NA'}}</td>
                             <td class="px-6 py-4 whitespace-no-wrap">
                                 @if($category->image)
-                                    <img src="{{ asset('category_images/' . $category->image) }}" alt="{{ $category->name }}" class="w-10 h-10 object-cover rounded-full">
+                                    <img src="{{$category->image}}" alt="{{ $category->name }}" class="w-10 h-10 object-cover rounded-full">
                                 @else
                                     No Image
                                 @endif

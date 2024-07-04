@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Storage;
 class CategoryController extends Controller
 {
     public function index(Request $request)
@@ -51,11 +51,13 @@ class CategoryController extends Controller
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('category_images'), $imageName);
-            // $category->image = $imageName;
-            $validatedData['image'] = $imageName;
+            $imageName ='category/' . time() . '.' . $image->getClientOriginalExtension();
+            Storage::disk('s3')->put($imageName, file_get_contents($image));
+            $categoryImage = Storage::disk('s3')->url($imageName);
+            // $category->image = $categoryImage;
+            $validatedData['image'] = $categoryImage;
         }
+
 
         // $category->save();
         Category::create($validatedData);
@@ -92,10 +94,11 @@ class CategoryController extends Controller
          
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('category_images'), $imageName);
-            // $category->image = $imageName;
-            $validatedData['image'] = $imageName;
+            $imageName ='category/' . time() . '.' . $image->getClientOriginalExtension();
+            Storage::disk('s3')->put($imageName, file_get_contents($image));
+            $categoryImage = Storage::disk('s3')->url($imageName);
+            // $category->image = $categoryImage;
+            $validatedData['image'] = $categoryImage;
         }
 
         // $category->save();

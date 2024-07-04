@@ -50,7 +50,7 @@ class CustomForgotPasswordController extends Controller
                 }
             }
           Mail::mailer('ses')->send('auth.forgotPassword', ['token' => $token], function($message) use($request){
-              $message->from('pallishreebehera01@gmail.com', 'Sahoj Pora');
+              $message->from('support@sohojpora.com', 'Sahoj Pora');
               $message->to($request->email);
               $message->subject('Reset Password');
           });

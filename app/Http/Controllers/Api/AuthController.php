@@ -210,7 +210,8 @@ class AuthController extends Controller
 
         if ($user) {
             // Generate OTP
-            $otp = Str::random(6);
+            // $otp = Str::random(6);
+            $otp = str_pad(random_int(0, 9999), 4, '0', STR_PAD_LEFT);
 
             // Store OTP and its expiration time in the user's record
             $user->update([
@@ -236,7 +237,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'otp' => 'required|string|size:6',
+            'otp' => 'required',
             'password' => 'required|string|min:6',
         ]);
 

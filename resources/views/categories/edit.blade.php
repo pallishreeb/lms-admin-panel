@@ -22,7 +22,7 @@
                 <label for="image" class="block text-gray-700">Image:</label>
                 <input type="file" name="image" id="image" class="border p-2 w-1/2" accept="image/*">
                 @if($category->image)
-                    <img src="{{ asset('category_images/' . $category->image) }}" alt="{{ $category->name }}" class="mt-2 w-32 h-32 object-cover rounded-md">
+                    <img src="{{$category->image}}" alt="{{ $category->name }}" class="mt-2 w-32 h-32 object-cover rounded-md">
                 @endif
                 @error('image')
                     <p class="text-red-500">{{ $message }}</p>
