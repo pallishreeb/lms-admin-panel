@@ -182,9 +182,9 @@ function App() {
         //add logo image to pdf link
         page.drawImage(image, {
             x: x + width + 16, // Adjust the x-coordinate to position the image after the text
-            y: y - 1, // Adjust the y-coordinate to vertically center the image with the text
-            width: 20,
-            height: 20,
+            y: y-15, // Adjust the y-coordinate to vertically center the image with the text
+            width: 42,
+            height: 44,
         });
         // Add text to the page
         page.drawText(text, {
