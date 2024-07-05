@@ -161,7 +161,7 @@ function App() {
             page.doc.context.obj({
                 Type: "Annot",
                 Subtype: "Link",
-                Rect: [x, y, x + 120, y + 20], // Adjust the rectangle dimensions as needed
+                Rect: [x, y - 10, x + 120, y + 65], // Adjust the rectangle dimensions as needed
                 Border: rgb(1, 0, 0), // No border
                 C: rgb(1, 0, 0), // Blue color
                 A: {
@@ -181,15 +181,15 @@ function App() {
         });
         //add logo image to pdf link
         page.drawImage(image, {
-            x: x + width + 16, // Adjust the x-coordinate to position the image after the text
-            y: y-15, // Adjust the y-coordinate to vertically center the image with the text
+            x: x + (width / 2) - (42 / 2), // Adjust the x-coordinate to position the image after the text
+            y: y + 5, // Adjust the y-coordinate to vertically center the image with the text
             width: 42,
-            height: 44,
+            height: 42,
         });
         // Add text to the page
         page.drawText(text, {
             x: x + 3, // Adjust the x-coordinate to align the text within the rectangle
-            y: y + 3, // Adjust the y-coordinate to align the text within the rectangle
+            y: y - 5, // Adjust the y-coordinate to align the text within the rectangle
             size: 10, // Adjust the font size as needed
             color: rgb(0, 0, 0),
             font: font,
