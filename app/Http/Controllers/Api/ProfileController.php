@@ -94,4 +94,21 @@ class ProfileController extends Controller
         ],200);
 
     }
+
+    public function delete_account(Request $request) {
+        $user = $request->user();
+
+        // Delete the profile image from S3 if it exists
+        if ($user->profile_image) {
+            $imagePath = parse_url($user->profile_image, PHP_URL_PATH);
+            Storage::disk('s3')->delete($imagePath);
+        }
+
+        // Delete the user account
+        $user->delete();
+
+        return response()->json([
+            'message' => 'Account successfully deleted',
+        ], 200);
+    }
 }
