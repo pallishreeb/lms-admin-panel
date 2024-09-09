@@ -72,6 +72,10 @@
                     @endforelse
             </tbody>
         </table>
+        <!-- Pagination Links -->
+            <div>
+                {{ $users->links() }}
+            </div>
         </div>
     </div>
     <script>

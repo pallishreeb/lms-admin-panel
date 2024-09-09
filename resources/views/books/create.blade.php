@@ -36,19 +36,19 @@
         <!-- Price -->
         <div class="mb-4">
             <label for="price" class="block text-sm font-medium text-gray-600">Price</label>
-            <input type="number" name="price" id="price" class="mt-1 p-2 border rounded-md w-full">
+            <input type="number" name="price" id="price" class="mt-1 p-2 border rounded-md w-full" required>
         </div>
 
         <!-- Pages -->
         <div class="mb-4">
             <label for="pages" class="block text-sm font-medium text-gray-600">Pages</label>
-            <input type="number" name="pages" id="pages" class="mt-1 p-2 border rounded-md w-full">
+            <input type="number" name="pages" id="pages" class="mt-1 p-2 border rounded-md w-full" required>
         </div>
 
         <!-- Language -->
         <div class="mb-4">
             <label for="language" class="block text-sm font-medium text-gray-600">Language</label>
-            <input type="text" name="language" id="language" class="mt-1 p-2 border rounded-md w-full">
+            <input type="text" name="language" id="language" class="mt-1 p-2 border rounded-md w-full" required>
         </div>
 
         <!-- Is Published -->
@@ -92,7 +92,7 @@
         <!-- Description (full width) -->
         <div class="col-span-2 mb-4">
             <label for="description" class="block text-sm font-medium text-gray-600">Description</label>
-            <textarea name="description" id="description" rows="3" class="mt-1 p-2 border rounded-md w-full"></textarea>
+            <textarea name="description" id="description" rows="3"  class="mt-1 p-2 border rounded-md w-full" required></textarea>
         </div>
 
     </div>
@@ -141,7 +141,8 @@
         xhr.onerror = function() {
             // Hide loading indicator on upload error
             document.getElementById('loadingIndicatorPdf').style.display = 'none';
-
+            // Show an error alert
+            alert('An error occurred while uploading the PDF. Please try again.');
             // Handle upload errors
             console.error('Upload error');
         };

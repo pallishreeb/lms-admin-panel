@@ -26,7 +26,15 @@
                 @foreach($book->videos as $video)
                     <tr class="border">
                         <td class="px-4 py-2 text-center">{{ $video->title }}</td>
-                        <td class="px-4 py-2 text-center"><button class="copy-btn text-blue-500 hover:underline" data-url="{{ $video->video_url }}">Copy URL</button></td>
+                        <td class="px-4 py-2 text-center">
+                            <button class="copy-btn text-blue-500 hover:underline" data-url="{{ $video->video_url }}">
+                                Copy URL
+                                  <!-- Hidden Copied Icon -->
+                        <span class="copied-icon text-green-500 hidden">
+                            ✔ Copied!
+                        </span>
+                            </button>
+                        </td>
                         <td class="px-4 py-2 text-center">{{ $video->getLikesCountAttribute() }}</td>
                         <td class="px-4 py-2 text-center">{{ $video->getDislikesCountAttribute() }}</td>
                         <td class="px-4 py-2 text-center">{{ $video->comments->count() }}
@@ -130,7 +138,7 @@
                     @else
                         No Image
                     @endif
-                    <input type="file" name="cover_pic" id="cover_pic" class="mt-1 p-2 border rounded-md w-full">
+                    <input type="file" name="cover_pic" id="cover_pic" class="mt-1 p-2 border rounded-md w-full" accept="image/*">
                 </div>
 
                 <!-- Existing PDF Book -->
@@ -147,7 +155,7 @@
                         No PDF Available
                     @endif
                     <label for="pdf_book" class="block text-sm font-medium text-gray-600">Upload new PDF Book</label>
-                    <input type="file" name="pdf_book" id="pdf_book" class="mt-1 p-2 border rounded-md w-full">
+                    <input type="file" name="pdf_book" id="pdf_book" class="mt-1 p-2 border rounded-md w-full" accept="application/pdf">
                     <progress id="progressBarPdf" value="0" max="100" class="w-full" style="display: none;"></progress>
                     <div id="loadingIndicatorPdf" style="display: none;">Uploading...</div>
                     <input type="text" id="attachmentUrl" style="display: none;" name="attachmentUrl">
@@ -203,7 +211,8 @@
         xhr.onerror = function() {
             // Hide loading indicator on upload error
             document.getElementById('loadingIndicatorPdf').style.display = 'none';
-
+             // Show an error alert
+             alert('An error occurred while uploading the PDF. Please try again.');
             // Handle upload errors
             console.error('Upload error');
         };
@@ -222,7 +231,17 @@
             tempInput.select();
             document.execCommand('copy');
             document.body.removeChild(tempInput);
-            alert('Video URL copied to clipboard');
+
+            // Show 'Copied!' icon and text
+            var copiedIcon = this.querySelector('.copied-icon');
+            this.textContent = 'Copied';
+            copiedIcon.classList.remove('hidden');
+
+            // Reset the button after 2 seconds
+            setTimeout(() => {
+                this.textContent = 'Copy URL';
+                copiedIcon.classList.add('hidden');
+            }, 30000);
         });
     });
 </script>

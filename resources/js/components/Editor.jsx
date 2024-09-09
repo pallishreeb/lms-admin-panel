@@ -176,7 +176,7 @@ function App() {
         page.drawRectangle({
             x,
             y: y - 4,
-            width: 120,
+            width: 80, //120
             height: 24,
             color: rgb(1, 1, 1),
         });

@@ -159,7 +159,10 @@ class AuthController extends Controller
                     'message' => 'Login successfull. OTP sent to email and mobile number',
                     'otp'=>$otp,                    
                     'token'=>$token,
-                    'data'=>$user],200);
+                    'data'=>$user,
+                    'logged_in_by' => 'manual'
+                ],
+                    200);
                 }else{
                     return response()->json([
                         'message'=>'Incorrect credentials',
@@ -174,7 +177,8 @@ class AuthController extends Controller
                 return response()->json([
                     'message'=>'Login Successfull',
                     'token'=>$token,
-                    'data'=>$user
+                    'data'=>$user,
+                    'logged_in_by' => 'manual'
                 ],200); 
 
             }else{
@@ -296,6 +300,7 @@ class AuthController extends Controller
                 'message' => 'Authentication successful',
                 'token' => $token,
                 'user' => $user,
+                'logged_in_by' => 'google'
             ]);
         } catch (\Exception $e) {
             // Log the exception message for debugging
@@ -346,7 +351,8 @@ class AuthController extends Controller
                 return response()->json([
                     'message' => 'Authentication successful',
                     'token' => $token,
-                    'user' => $user
+                    'user' => $user,
+                    'logged_in_by' => 'google'
                 ]);
             } else {
                 return response()->json(['error' => 'Invalid Google token'], 401);

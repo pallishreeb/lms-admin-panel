@@ -182,13 +182,13 @@ public function index(Request $request)
         return $queryBuilder->where('name', 'like', '%' . $query . '%')
                             ->orWhere('email', 'like', '%' . $query . '%');
         // Add more fields as needed
-    }, function ($queryBuilder) {
-        // If no query, return all users
-        return $queryBuilder;
-    })->get();
+    })->orderBy('created_at', 'desc') // Order by newest first
+      ->paginate(10); // Paginate results, showing 10 users per page
 
     return view('users.index', ['users' => $users]);
 }
+
+
 
 public function deleteConfirmation(User $user)
 {

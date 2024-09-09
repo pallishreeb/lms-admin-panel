@@ -3,6 +3,7 @@
 @section('content')
     <div class="container mx-auto py-8">
         <h1 class="text-2xl font-bold mb-4">Create New Video</h1>
+
         <form action="{{ route('videos.store', ['bookId' => $bookId]) }}" method="POST" enctype="multipart/form-data" class="max-w-full mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
             @csrf
             <div class="flex justify-end mt-1 gap-1">
@@ -105,6 +106,8 @@
         // Hide loading indicator on upload error
         document.getElementById('loadingIndicator').style.display = 'none';
 
+    // Show an error alert
+    alert('An error occurred while uploading the Video. Please try again.');
         // Handle upload errors
         console.error('Upload error');
     };
@@ -153,6 +156,8 @@ document.getElementById('attachment').addEventListener('change', function() {
         // Hide loading indicator on upload error
         document.getElementById('loadingIndicatorPdf').style.display = 'none';
 
+       // Show an error alert
+       alert('An error occurred while uploading the Video. Please try again.');
         // Handle upload errors
         console.error('Upload error');
     };

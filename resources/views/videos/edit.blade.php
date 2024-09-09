@@ -118,6 +118,8 @@
         // Hide loading indicator on upload error
         document.getElementById('loadingIndicator').style.display = 'none';
 
+    // Show an error alert
+    alert('An error occurred while uploading the Video. Please try again.');
         // Handle upload errors
         console.error('Upload error');
     };
@@ -166,6 +168,8 @@ document.getElementById('attachment').addEventListener('change', function() {
         // Hide loading indicator on upload error
         document.getElementById('loadingIndicatorPdf').style.display = 'none';
 
+    // Show an error alert
+    alert('An error occurred while uploading the PDF. Please try again.');
         // Handle upload errors
         console.error('Upload error');
     };
