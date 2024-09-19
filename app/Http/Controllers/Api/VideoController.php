@@ -177,8 +177,11 @@ class VideoController extends Controller
         $video = Video::findOrFail($videoId);
 
         // Eager load comments with their replies
-        $comments = Comment::with('replies')->where('video_id', $video->id)->get();
-
+        //$comments = Comment::with('replies')->where('video_id', $video->id)->get();
+        // Eager load comments with their replies and the users associated with both
+        $comments = Comment::with(['replies.user', 'user']) // Load the user for comments and replies
+        ->where('video_id', $video->id)
+        ->get();
         return response()->json($comments);
     }
     public function editComment(Request $request, $commentId)
@@ -262,7 +265,8 @@ class VideoController extends Controller
         $comment = Comment::findOrFail($commentId);
 
         // Get all replies for the specified comment
-        $replies = $comment->replies;
+        // $replies = $comment->replies;
+        $replies = $comment->replies()->with('user')->get();
 
         return response()->json(['replies' => $replies], 200);
     }

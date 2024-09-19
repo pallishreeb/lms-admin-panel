@@ -119,6 +119,23 @@ class AuthController extends Controller
         }
         $user=User::where('email',$request->email)->first();
         if($user){
+            // Skip device ID check for "hello2@yopmail.com"
+            if ($request->email === 'hello2@yopmail.com') {
+                if (Hash::check($request->password, $user->password)) {
+                    $token = $user->createToken('auth-token')->plainTextToken;
+
+                    return response()->json([
+                        'message' => 'Login Successful',
+                        'token' => $token,
+                        'data' => $user,
+                        'logged_in_by' => 'manual'
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'message' => 'Incorrect credentials',
+                    ], 400);
+                }
+            }
         // Check if the provided device_id matches the stored device_id
         $deviceMatch = $request->device_id === $user->device_id;
             if ($deviceMatch == false) {
