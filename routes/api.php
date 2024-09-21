@@ -38,6 +38,7 @@ Route::post('/auth/google/callback-api', [AuthController::class, 'handleGoogleCa
 Route::post('/profile/change-password',[ProfileController::class,'change_password'])->middleware('auth:sanctum');
 Route::post('/profile/update-profile',[ProfileController::class,'update_profile'])->middleware('auth:sanctum');
 Route::delete('/profile/delete', [ProfileController::class, 'delete_account'])->middleware('auth:sanctum');
+Route::get('/profile/delete/{userId}', [ProfileController::class, 'delete_account_user']);
 
 Route::get('/categories', [CategoryController::class, 'allCategories']);
 Route::get('/categories/book', [CategoryController::class, 'getBooks']);

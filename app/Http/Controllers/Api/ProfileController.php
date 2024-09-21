@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
 use Hash;
 use File;
 
@@ -111,4 +112,29 @@ class ProfileController extends Controller
             'message' => 'Account successfully deleted',
         ], 200);
     }
+
+    public function delete_account_user($userId) {
+        // Find the user by ID
+        $user = User::find($userId);
+    
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found',
+            ], 404);
+        }
+    
+        // Delete the profile image from S3 if it exists
+        if ($user->profile_image) {
+            $imagePath = parse_url($user->profile_image, PHP_URL_PATH);
+            Storage::disk('s3')->delete($imagePath);
+        }
+    
+        // Delete the user account
+        $user->delete();
+    
+        return response()->json([
+            'message' => 'Account successfully deleted',
+        ], 200);
+    }
+    
 }
