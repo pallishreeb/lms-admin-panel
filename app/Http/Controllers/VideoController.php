@@ -127,12 +127,17 @@ class VideoController extends Controller
     public function comments()
     {
         try {
-            $comments = Comment::with('video', 'replies')->get();
+            // Get comments with video and replies, ordered by latest created_at for comments and replies
+            $comments = Comment::with(['video', 'replies' => function($query) {
+                $query->orderBy('created_at', 'desc');
+            }])->orderBy('created_at', 'desc')->get();
+    
             return view('videos.comments', compact('comments'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error occurred while retrieving comments: ' . $e->getMessage());
         }
     }
+    
 
     public function destroyComment(Comment $comment)
     {
@@ -153,4 +158,16 @@ class VideoController extends Controller
             return redirect()->back()->with('error', 'An error occurred while deleting the reply: ' . $e->getMessage());
         }
     }
+
+    public function addReply(Request $request, Comment $comment)
+{
+    $request->validate(['content' => 'required']);
+    $comment->replies()->create([
+        'content' => $request->input('content'),
+        'user_id' => auth()->id(), // or a specific admin user ID if needed
+    ]);
+
+    return redirect()->back()->with('success', 'Reply added successfully.');
+}
+
 }

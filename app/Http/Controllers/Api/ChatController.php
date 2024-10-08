@@ -27,31 +27,49 @@ class ChatController extends Controller
             }
         }
   
-        // Function to send a new chat message
-        public function sendMessage(Request $request)
-        {
-            $request->validate([
-                'message' => 'required|string',
-                'image' => 'nullable|image|max:20480'
-            ]);
-        
-            $message = new ChatMessage([
-                'message' => $request->input('message'),
-                'user_id' => $request->input('user_id'),
-            ]);
-               // Handle profile image upload
-            if ($request->hasFile('image')) {
-                $chatImage = $request->file('image');
-                $imageName = 'chat_messages_pics/' . $chatImage->getClientOriginalName();
-                // Set the profile image URL in the user model
-                Storage::disk('s3')->put($imageName, file_get_contents($chatImage));
-                $message->image = Storage::disk('s3')->url($imageName);
-            }
-    
-            $message->save();
-    
-            return response()->json(['message' => 'Message sent successfully']);
+// Function to send a new chat message
+public function sendMessage(Request $request)
+{
+    // Validate incoming request
+    $request->validate([
+        'message' => 'required|string',
+        'image' => 'nullable|image|max:20480', // Image validation
+        'audio' => 'nullable|file|max:20480', // Audio validation
+    ]);
+
+    try {
+        // Create a new chat message instance
+        $message = new ChatMessage([
+            'message' => $request->input('message'),
+            'user_id' => $request->input('user_id'),
+        ]);
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $chatImage = $request->file('image');
+            $imageName = 'chat_messages_pics/' . $chatImage->getClientOriginalName();
+            Storage::disk('s3')->put($imageName, file_get_contents($chatImage));
+            $message->image = Storage::disk('s3')->url($imageName);
         }
+
+        // Handle audio upload
+        if ($request->hasFile('audio')) {
+            $audioFile = $request->file('audio');
+            $audioName = 'chat_messages_audios/' . $audioFile->getClientOriginalName();
+            Storage::disk('s3')->put($audioName, file_get_contents($audioFile));
+            $message->audio = Storage::disk('s3')->url($audioName);
+        }
+
+        // Save the message
+        $message->save();
+
+        return response()->json(['message' => 'Message sent successfully']);
+    } catch (\Exception $e) {
+        // Handle any exceptions that occur during the process
+        return response()->json(['error' => 'Failed to send message: ' . $e->getMessage()], 500);
+    }
+}
+
 
 
 
