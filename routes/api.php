@@ -34,6 +34,7 @@ Route::get('/auth/user',[AuthController::class,'user'])->middleware('auth:sanctu
 Route::post('/auth/logout',[AuthController::class,'logout'])->middleware('auth:sanctum');
 Route::post('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 Route::post('/auth/google/callback-api', [AuthController::class, 'handleGoogleCallbackNew']);
+Route::post('/user/token', [AuthController::class, 'updateDeviceToken'])->middleware('auth:sanctum');
 
 Route::post('/profile/change-password',[ProfileController::class,'change_password'])->middleware('auth:sanctum');
 Route::post('/profile/update-profile',[ProfileController::class,'update_profile'])->middleware('auth:sanctum');

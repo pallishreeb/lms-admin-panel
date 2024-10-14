@@ -378,4 +378,21 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unable to authenticate with Google. Please try again.'], 500);
         }
     }
+
+    public function updateDeviceToken(Request $request)
+{
+    // Validate the request data
+    $request->validate([
+        'device_token' => 'nullable|string',
+    ]);
+
+    // Update the device token for the authenticated user
+    $user = auth()->user();
+    $user->device_token = $request->input('device_token');
+    $user->save();
+
+    // Return a success response
+    return response()->json(['message' => 'Device token updated successfully'], 200);
+}
+
 }
