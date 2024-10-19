@@ -10,6 +10,7 @@
         "dompdf/dompdf": "^2.0",
         "google/apiclient": "^2.17",
         "guzzlehttp/guzzle": "^7.2",
+        "jenssegers/agent": "^2.6",
         "laravel-notification-channels/aws-sns": "^1.5",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",

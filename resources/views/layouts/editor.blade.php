@@ -167,9 +167,13 @@
             <div class="relative">
                     <!-- Display user's name -->
                     <div class="cursor-pointer" onclick="toggleDropdown()">
+                        @if(Auth::user()->profile_image)
+                        <img src="{{ Auth::user()->profile_image }}" alt="Profile" class="rounded-full w-10 h-10">
+                    @else
                         <div class="rounded-full w-10 h-10 bg-blue-500 flex items-center justify-center text-white">
                             {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                         </div>
+                    @endif
                     </div>
 
                     <!-- Dropdown content -->

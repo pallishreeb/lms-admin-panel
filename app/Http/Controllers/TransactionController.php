@@ -9,6 +9,7 @@ use App\Models\AnalogPayment;
 use App\Models\PaymentMethod;
 use App\Models\Category;
 use App\Models\User;
+use App\Models\Notification;
 use Google\Client as GoogleClient;
 use Illuminate\Support\Facades\Storage;
 
@@ -117,6 +118,14 @@ class TransactionController extends Controller
         $message = "Your payment has been " . ucfirst($request->input('status')) . ".";
         $this->sendPushNotification($deviceToken, $title, $message);
 
+        // Store the notification in the notifications table
+        Notification::create([
+            'user_id' => $user->id, // The ID of the user who receives the notification
+            'title' => $title,
+            'body' => $message,
+            'book_id' => null, // If no book is associated, set to null
+            'course_id' => null, // If no course is associated, set to null
+        ]);
         // Redirect back with success message
         return redirect()->back()->with('success', 'Payment status updated successfully.');
     }

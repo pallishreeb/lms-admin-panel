@@ -81,7 +81,7 @@ public function login() {
 //             // Store OTP and its expiration time in the user's record
 //             $user->update([
 //                 'otp' => $otp,
-//                 'otp_valid_until' => now()->addMinutes(2),
+//                 'otp_valid_until' => now()->addMinutes(5),
 //                 'device_id' =>$request->device_id
 //             ]);
     
@@ -89,20 +89,6 @@ public function login() {
 //             Mail::to($user->email)->send(new OtpMail($otp));
 //             // Store email in the session
 //             $request->session()->put('otp_email', $user->email);
-//             // Use Twilio to send the OTP via SMS
-//             // $account_sid = getenv('TWILIO_ACCOUNT_SID');
-//             // $auth_token = getenv('TWILIO_AUTH_TOKEN');
-//             // $twilio_number = getenv('TWILIO_PHONE_NUMBER');
-    
-//             // $client = new Client($account_sid, $auth_token);
-//             // $client->messages->create(
-//             //     // Where to send a text message
-//             //     '+918144128737',
-//             //     array(
-//             //         'from' => $twilio_number,
-//             //         'body' => 'Your OTP is: ' . $otp,
-//             //     )
-//             // );
 //             if(auth()->attempt($formFields)) {
 //                 $request->session()->regenerate();
 //                 return redirect()->route('verify.otp.form');
@@ -137,12 +123,22 @@ public function authenticate(Request $request)
             // Return with error message
             return back()->withErrors(['email' => 'Access Denied: You do not have admin rights'])->onlyInput('email');
         }
+            $user = User::where('email', $request->email)->first();
+            $request->session()->put('otp_email', $user->email);
+            // Generate OTP
+            $otp = str_pad(random_int(0, 9999), 4, '0', STR_PAD_LEFT);
+    
+            // Store OTP and its expiration time in the user's record
+            $user->update([
+                'otp' => $otp,
+                'otp_valid_until' => now()->addMinutes(5),
+            ]);
+    
+            // Send OTP via email
+            Mail::to($user->email)->send(new OtpMail($otp));
 
-        // Store the user ID in the session to track admin login
-        $request->session()->put('admin_user_id', auth()->user()->id);
-        $request->session()->regenerate();
-
-        return redirect('/')->with('message', 'You are now logged in!');
+        // return redirect('/')->with('message', 'You are now logged in!');
+        return redirect()->route('verify.otp.form');
     }
 
     return back()->withErrors(['email' => 'Invalid Credentials'])->onlyInput('email');

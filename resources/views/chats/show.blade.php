@@ -14,42 +14,61 @@
     <h2 class="text-xl font-semibold mb-4">Chats with {{ $user->name }}</h2>
 
     @foreach($chats as $chat)
-        <div class="mb-3 flex items-start justify-{{ $chat->admin_id ? 'end' : 'start' }}">
-            <div class="max-w-xs bg-gray-200 p-2 rounded-md">
+        <div class="mb-3 flex items-start justify-between">
+            <!-- User profile image and name -->
+            <div class="{{ $chat->admin_id ? 'ml-auto' : '' }} flex items-start mt-2">
                 @if ($chat->admin_id)
-                    <span class="font-bold text-blue-500">Admin:</span>
+                    @if($user->profile_image)
+                        <img src="{{ $user->profile_image }}" alt="User Profile" class="rounded-full w-10 h-10 mr-2">
+                    @else
+                        <div class="rounded-full w-10 h-10 bg-blue-500 flex items-center justify-center text-white mr-2">
+                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                        </div>
+                    @endif
+                    <span class="font-bold text-blue-500">Admin</span>
                 @else
-                    <span class="font-bold text-green-500">{{ $user->name }}:</span>
+                    @if($user->profile_image)
+                        <img src="{{ $user->profile_image }}" alt="User Profile" class="rounded-full w-10 h-10 mr-2">
+                    @else
+                        <div class="rounded-full w-10 h-10 bg-blue-500 flex items-center justify-center text-white mr-2">
+                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                        </div>
+                    @endif
+                    <span class="font-bold text-green-500">{{ $user->name }}</span>
                 @endif
-
-                <p>{{ $chat->message }}</p>
-
-                <!-- Display image if exists -->
-                @if ($chat->image)
-                    <a href="{{ $chat->image }}" target="_blank">
-                        <img src="{{ $chat->image }}" alt="Chat Image" class="w-30 rounded-lg mt-2">
-                    </a>
-                @endif
-
-                <!-- Display audio if exists -->
-                @if ($chat->audio)
-                    <audio controls class="mt-2">
-                        <source src="{{ $chat->audio }}" type="audio/mpeg">
-                        Your browser does not support the audio element.
-                    </audio>
-                @endif
-
-                <span class="text-xs text-gray-500">({{ $chat->created_at->diffForHumans() }})</span>
             </div>
 
             <!-- Delete button -->
             <form action="{{ route('delete-chat', ['id' => $chat->id]) }}" method="post">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="text-red-500 hover:text-red-700 ml-2 mt-2">
-                    Delete
+                <button type="submit" class="text-red-500 hover:text-red-700" title="Delete">
+                    <i class="fas fa-trash"></i>
                 </button>
             </form>
+        </div>
+
+        <!-- Chat message and media -->
+        <div class="{{ $chat->admin_id ? 'max-w-xs bg-blue-100 ml-auto' : 'max-w-xs bg-gray-200 ml-12' }} p-2 rounded-md"> <!-- Conditional styling -->
+            <p>{{ $chat->message }}</p>
+
+            <!-- Display image if exists -->
+            @if ($chat->image)
+                <a href="{{ $chat->image }}" target="_blank">
+                    <img src="{{ $chat->image }}" alt="Chat Image" class="w-30 rounded-lg mt-2">
+                </a>
+            @endif
+
+            <!-- Display audio if exists -->
+            @if ($chat->audio)
+                <audio controls class="mt-2">
+                    <source src="{{ $chat->audio }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            @endif
+
+            <span class="text-xs text-gray-500">({{ $chat->created_at->format('Y-m-d H:i:s') }})</span>
+
         </div>
     @endforeach
 
@@ -77,9 +96,6 @@
         
             <button type="submit" class="bg-yellow-600 text-white px-4 py-2 rounded mt-4">Reply</button>
         </form>
-        
-
-        
     </div>
 </div>
 
@@ -120,6 +136,4 @@
     });
 </script>
 
-<!-- Font Awesome CSS (if not already included) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMz4MN2JK0Mpa/tmWz9C9IsU5WPElIRAmL/6nS" crossorigin="anonymous">
 @endsection

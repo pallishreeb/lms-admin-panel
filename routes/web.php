@@ -18,7 +18,7 @@ use App\Http\Controllers\PaymentMethodController;
 Route::get('/admin/config', [AppConfigController::class, 'index'])->name('admin.config')->middleware('auth');
 Route::post('/admin/update-notification-preference', [AppConfigController::class, 'updateNotificationPreference'])->name('admin.updateNotificationPreference')->middleware('auth');
 Route::get('/admin/dashboard', [AppConfigController::class, 'dashboard'])->name('admin.dashboard')->middleware('auth');
-
+Route::post('/admin/sessions/logout/{id}', [AppConfigController::class, 'logout'])->name('admin.sessions.logout');
 //chat
 Route::get('/user-messages', [ChatMessageController::class, 'index'])->name('user-messages')->middleware('auth');
 Route::get('/user-chats/{user}', [ChatMessageController::class, 'showUserChats'])->name('user-chats')->middleware('auth');

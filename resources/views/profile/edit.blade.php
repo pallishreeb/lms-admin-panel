@@ -1,11 +1,10 @@
-<!-- resources/views/profile/edit.blade.php -->
-
 @extends('layouts.app')
 
 @section('content')
     <div class="container mx-auto mt-10 p-8 bg-white shadow-md rounded-md">
         <h1 class="text-3xl font-semibold mb-4">Edit Your Profile</h1>
-        <form action="{{ route('profile.update') }}" method="post">
+
+        <form action="{{ route('profile.update') }}" method="post" enctype="multipart/form-data"> <!-- Add enctype for file upload -->
             @csrf
             @method('put')
 
@@ -29,6 +28,14 @@
                 <label for="address" class="block text-sm font-medium text-gray-600">Address:</label>
                 <input type="text" name="address" value="{{ old('address', $user->address) }}" class="mt-1 p-2 border rounded-md w-1/2">
                 <!-- Add more fields as needed -->
+            </div>
+
+            <div class="mb-4">
+                <label for="profile_image" class="block text-sm font-medium text-gray-600">Profile Image:</label>
+                <input type="file" name="profile_image" class="mt-1 p-2 border rounded-md w-1/2">
+                @error('profile_image')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
 
             <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:shadow-outline-blue active:bg-yellow-800">

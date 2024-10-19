@@ -5,6 +5,12 @@
 @section('content')
     <div class="container mx-auto mt-10 p-8 bg-white shadow-md rounded-md">
         <h1 class="text-3xl font-semibold mb-4">Your Profile</h1>
+        @if ($user->profile_image)
+            <div class="mb-4">
+                <img src="{{ $user->profile_image }}" alt="Profile Image" class="w-24 h-24 rounded-full">
+            </div>
+        @endif
+
         <p class="text-lg">Name: {{ $user->name }}</p>
         <p class="text-lg">Email: {{ $user->email }}</p>
         @if($user->address)
