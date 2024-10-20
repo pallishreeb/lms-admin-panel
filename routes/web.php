@@ -137,6 +137,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/comments/{comment}', [VideoController::class, 'destroyComment'])->name('admin.comments.destroy');
     Route::delete('/replies/{reply}', [VideoController::class, 'destroyReply'])->name('admin.replies.destroy');
     Route::post('/admin/comments/{comment}/reply', [VideoController::class, 'addReply'])->name('admin.replies.store');
+    Route::post('/admin/replies/{reply}/edit', [VideoController::class, 'editReply'])->name('admin.replies.update');
 
 
     // Index route - to list all payment details

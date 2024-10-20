@@ -33,8 +33,8 @@ public function reply(User $user, Request $request)
 {
     $request->validate([
         'message' => 'required|string',
-        'image' => 'nullable|image|max:20480',
-        'audio' => 'nullable|file|max:20480',
+        'image' => 'nullable|image|max:30480',
+        'audio' => 'nullable|file|max:50480',
     ]);
 
     $admin = auth()->user();

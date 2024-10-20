@@ -75,7 +75,7 @@ class VideoController extends Controller
     {
         $request->validate([
             'content' => 'required|string',
-            'image' => 'nullable|image|max:20480', // Max 2MB
+            'image' => 'nullable|image|max:30480', // Max 2MB
         ]);
 
         $video = Video::findOrFail($videoId);
@@ -118,7 +118,7 @@ class VideoController extends Controller
     {
         $request->validate([
             'content' => 'required|string',
-            'image' => 'nullable|image|max:20480', // Max 2MB
+            'image' => 'nullable|image|max:30480', // Max 2MB
         ]);
 
         $comment = Comment::findOrFail($commentId);
@@ -233,7 +233,7 @@ class VideoController extends Controller
     {
         $request->validate([
             'content' => 'required|string',
-            'image' => 'nullable|image|max:20480', // Max 2MB
+            'image' => 'nullable|image|max:30480', // Max 2MB
         ]);
 
         $reply = Reply::findOrFail($replyId);

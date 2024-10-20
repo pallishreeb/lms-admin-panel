@@ -160,14 +160,70 @@ class VideoController extends Controller
     }
 
     public function addReply(Request $request, Comment $comment)
-{
-    $request->validate(['content' => 'required']);
-    $comment->replies()->create([
-        'content' => $request->input('content'),
-        'user_id' => auth()->id(), // or a specific admin user ID if needed
-    ]);
-
-    return redirect()->back()->with('success', 'Reply added successfully.');
-}
+    {
+        $request->validate([
+            'content' => 'required|string',
+            'image' => 'nullable|image|max:30480', // Max 30MB for image
+        ]);
+    
+        // Create a new reply
+        $reply = new Reply();
+        $reply->content = $request->input('content');
+        $reply->user_id = auth()->id(); // Admin ID or authenticated user ID
+        $reply->comment_id = $comment->id;
+    
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imagePath = 'comments-replies/' . $image->getClientOriginalName();
+    
+            // Store the image in AWS S3 or any other storage
+            Storage::disk('s3')->put($imagePath, file_get_contents($image));
+    
+            // Save the image URL to the reply
+            $imageUrl = Storage::disk('s3')->url($imagePath);
+            $reply->image = $imageUrl;
+        }
+    
+        // Save the reply
+        $reply->save();
+    
+        return redirect()->back()->with('success', 'Reply added successfully.');
+    }
+    public function editReply(Request $request, Reply $reply)
+    {
+        // Validate the input
+        $request->validate([
+            'content' => 'required|string',
+            'image' => 'nullable|image|max:30480', // Max 30MB for image
+        ]);
+    
+        // Update the reply content
+        $reply->content = $request->input('content');
+    
+        // Handle image upload (if a new one is provided)
+        if ($request->hasFile('image')) {
+            // Delete old image if it exists
+            if ($reply->image) {
+                Storage::disk('s3')->delete(basename($reply->image));
+            }
+    
+            $image = $request->file('image');
+            $imagePath = 'comments-replies/' . $image->getClientOriginalName();
+    
+            // Store new image in AWS S3
+            Storage::disk('s3')->put($imagePath, file_get_contents($image));
+    
+            // Save the new image URL to the reply
+            $imageUrl = Storage::disk('s3')->url($imagePath);
+            $reply->image = $imageUrl;
+        }
+    
+        // Save the updated reply
+        $reply->save();
+    
+        return redirect()->back()->with('success', 'Reply updated successfully.');
+    }
+        
 
 }

@@ -33,8 +33,8 @@ public function sendMessage(Request $request)
     // Validate incoming request
     $request->validate([
         'message' => 'required|string',
-        'image' => 'nullable|image|max:20480', // Image validation
-        'audio' => 'nullable|file|max:20480', // Audio validation
+        'image' => 'nullable|image|max:30480', // Image validation
+        'audio' => 'nullable|file|max:50480', // Audio validation
     ]);
 
     try {
