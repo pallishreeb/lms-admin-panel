@@ -8,10 +8,11 @@ use Illuminate\Support\Facades\Validator;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+use App\Models\Notification;
 use Hash;
 use File;
 
-class ProfileController extends Controller
+class NotificationController extends Controller
 {
     public function index(Request $request)
     {

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\VideoController;
 use App\Http\Controllers\Api\AnalogPaymentController;
+use App\Http\Controllers\Api\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
