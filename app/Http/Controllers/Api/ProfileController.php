@@ -42,60 +42,69 @@ class ProfileController extends Controller
 
     }
 
-    public function update_profile(Request $request){
+    public function update_profile(Request $request)
+    {
+        // Validate incoming request
         $validator = Validator::make($request->all(), [
-            'name'=>'nullable|min:2|max:100',
-            'mobile_number'=>'nullable|max:100',
-            'address'=>'nullable|max:100',
-            'password'=>'nullable|min:6|max:100',
-            'profile_image' => 'nullable|image|max:20480' // Max file size: 2MB
+            'name' => 'required|min:2|max:100',  // Change from nullable to required
+            'mobile_number' => 'nullable|max:100',
+            'address' => 'nullable|max:100',
+            'password' => 'nullable|min:6|max:100',
+            'profile_image' => 'nullable|image|max:20480' // Max file size: 20MB
         ]);
+    
+        // Check for validation failures
         if ($validator->fails()) {
             return response()->json([
-                'message'=>'Validations fails',
-                'errors'=>$validator->errors()
-            ],422);
-        } 
-
-        //$user=$request->user();
-        // $user->update([
-        //     'name'=>$request->name,
-        //     'mobile_number'=>$request->mobile_number,
-        //     'address'=>$request->address
-        // ]);
-        // Update profile fields
-        $user=$request->user();
-        if ($request->has('name')) {
-            $user->name = $request->name;
+                'message' => 'Validations fail',
+                'errors' => $validator->errors()
+            ], 422);
         }
-        
-        if ($request->has('mobile_number')) {
-            $user->mobile_number = $request->mobile_number;
+    
+        // Retrieve the authenticated user
+        $user = $request->user();
+    
+        try {
+            // Update profile fields
+            $user->name = $request->name; // No need to check if 'name' is present since it's now required
+    
+            if ($request->has('mobile_number')) {
+                $user->mobile_number = $request->mobile_number;
+            }
+    
+            if ($request->has('address')) {
+                $user->address = $request->address;
+            }
+    
+            if ($request->has('password')) {
+                $user->password = Hash::make($request->password);
+            }
+    
+            // Handle profile image upload
+            if ($request->hasFile('profile_image')) {
+                $profileImage = $request->file('profile_image');
+                $imageName = 'user_profile_pics/' . $profileImage->getClientOriginalName();
+                
+                // Upload to S3
+                Storage::disk('s3')->put($imageName, file_get_contents($profileImage));
+                $user->profile_image = Storage::disk('s3')->url($imageName);
+            }
+    
+            // Save the updated user
+            $user->save();
+    
+            return response()->json([
+                'message' => 'Profile successfully updated',
+            ], 200);
+        } catch (\Exception $e) {
+            // Catch any errors during the update process
+            return response()->json([
+                'message' => 'Profile update failed',
+                'error' => $e->getMessage()
+            ], 500);
         }
-        
-        if ($request->has('address')) {
-            $user->address = $request->address;
-        }
-        
-        if ($request->has('password')) {
-            $user->password = Hash::make($request->password);
-        }
-        // Handle profile image upload
-        if ($request->hasFile('profile_image')) {
-            $profileImage = $request->file('profile_image');
-            $imageName = 'user_profile_pics/' . $profileImage->getClientOriginalName();
-            // Set the profile image URL in the user model
-            Storage::disk('s3')->put($imageName, file_get_contents($profileImage));
-            $user->profile_image = Storage::disk('s3')->url($imageName);
-        }
-
-        $user->save();
-
-        return response()->json([
-            'message'=>'Profile successfully updated',
-        ],200);
-
     }
+    
 
     public function delete_account(Request $request)
     {

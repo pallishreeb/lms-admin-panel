@@ -31,10 +31,13 @@ public function showUserChats(User $user)
 
 public function reply(User $user, Request $request)
 {
+    // Print the entire request for debugging
+    // dd($request->all());  // Only use this for debugging if needed
+
     $request->validate([
         'message' => 'required|string',
         'image' => 'nullable|image|max:30480',
-        'audio' => 'nullable|file|max:50480',
+        'audio_base64' => 'nullable|string',
     ]);
 
     $admin = auth()->user();
@@ -45,7 +48,7 @@ public function reply(User $user, Request $request)
         'admin_id' => $admin->id,
     ]);
 
-    // Handle image upload
+    // Handle image upload (if included)
     if ($request->hasFile('image')) {
         try {
             $image = $request->file('image');
@@ -57,12 +60,19 @@ public function reply(User $user, Request $request)
         }
     }
 
-    // Handle audio upload
-    if ($request->hasFile('audio')) {
+    // Handle audio upload from base64
+    if ($request->input('audio_base64')) {
         try {
-            $audio = $request->file('audio');
-            $audioName = 'chat_audios/' . $audio->getClientOriginalName();
-            Storage::disk('s3')->put($audioName, file_get_contents($audio));
+            $audio_base64 = $request->input('audio_base64');
+            $audioData = base64_decode($audio_base64);
+            
+            // Define the audio file name and path
+            $audioName = 'chat_audios/audio_' . time() . '.wav';  // Assuming the format is .wav, change as needed
+
+            // Save the audio to S3
+            Storage::disk('s3')->put($audioName, $audioData);
+            
+            // Set the audio URL in the message
             $message->audio = Storage::disk('s3')->url($audioName);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Audio upload failed: ' . $e->getMessage());
@@ -79,8 +89,6 @@ public function reply(User $user, Request $request)
     return redirect()->route('user-chats', ['user' => $user->id])
         ->with('success', 'Reply sent successfully');
 }
-
-
 
 public function showUserMessages(User $user)
 {

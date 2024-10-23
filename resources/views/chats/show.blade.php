@@ -39,10 +39,10 @@
             </div>
 
             <!-- Delete button -->
-            <form action="{{ route('delete-chat', ['id' => $chat->id]) }}" method="post">
+            <form action="{{ route('delete-chat', ['id' => $chat->id]) }}" method="post" onsubmit="return confirmDelete(event)">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="text-red-500 hover:text-red-700" title="Delete">
+                <button type="submit" class="text-red-500 hover:text-red-700" title="Delete" >
                     <i class="fas fa-trash"></i>
                 </button>
             </form>
@@ -86,11 +86,15 @@
                 </label>
                 <!-- Audio Input -->
                 <label class="flex items-center ml-4">
-                    <input type="file" name="audio" accept="audio/*" id="audioInput" class="hidden">
-                    <i class="fas fa-microphone text-green-500 text-xl cursor-pointer"></i> <!-- Audio icon -->
+                    <button type="button" id="recordButton" class="text-green-500 text-xl cursor-pointer">
+                        <i class="fas fa-microphone"></i> <!-- Audio icon -->
+                    </button>
                 </label>
             </div>
         
+            <!-- Timer display -->
+            <div id="timerDisplay" class="mt-2 text-red-500"></div>
+            
             <!-- Previews -->
             <div id="previewContainer" class="mt-2"></div>
         
@@ -99,41 +103,123 @@
     </div>
 </div>
 
-<!-- Previews -->
+<!-- JavaScript for handling image and audio previews -->
 <script>
-    // Function to create and display a preview of the selected image
-    function showImagePreview(file) {
-        const imgPreview = document.createElement('img');
-        imgPreview.src = URL.createObjectURL(file);
-        imgPreview.className = 'w-20 rounded-lg mb-2'; // Add margin to separate from audio preview
-        return imgPreview;
+    let mediaRecorder;
+    let audioChunks = [];
+    let recording = false;
+    let timerInterval;
+    let startTime;
+    const recordButton = document.getElementById('recordButton');
+    const previewContainer = document.getElementById('previewContainer');
+    const timerDisplay = document.getElementById('timerDisplay');
+
+    // Timer function
+    function startTimer() {
+        startTime = Date.now();
+        timerInterval = setInterval(() => {
+            const elapsedTime = Date.now() - startTime;
+            const seconds = Math.floor(elapsedTime / 1000) % 60;
+            const minutes = Math.floor(elapsedTime / (1000 * 60));
+            timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }, 1000);
     }
 
-    // Function to create and display a preview of the selected audio
-    function showAudioPreview(file) {
-        const audioPreview = document.createElement('audio');
-        audioPreview.src = URL.createObjectURL(file);
-        audioPreview.controls = true;
-        return audioPreview;
+    function stopTimer() {
+        clearInterval(timerInterval);
+        timerDisplay.textContent = '';
     }
+
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        mediaRecorder = new MediaRecorder(stream);
+
+        recordButton.addEventListener('click', () => {
+            if (!recording) {
+                // Start recording
+                recording = true;
+                audioChunks = [];
+                mediaRecorder.start();
+                startTimer();
+            } else {
+                // Stop recording
+                recording = false;
+                mediaRecorder.stop();
+                stopTimer();
+            }
+        });
+
+        mediaRecorder.ondataavailable = event => {
+            audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audio = document.createElement('audio');
+            audio.src = audioUrl;
+            audio.controls = true;
+
+            // Clear the previous preview and append the new one
+            previewContainer.innerHTML = '';
+            previewContainer.appendChild(audio);
+
+            // Create a delete button
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.innerHTML='<i class="fas fa-trash"></i>'
+            deleteButton.className = 'ml-4 mt-2 mb-2 bg-red-500 text-white px-2 py-1 rounded';
+            deleteButton.addEventListener('click', () => {
+                previewContainer.innerHTML = '';
+            });
+            previewContainer.appendChild(deleteButton);
+
+            // Append the Blob data into a form hidden input as a base64 string
+            const reader = new FileReader();
+            reader.readAsDataURL(audioBlob);
+            reader.onloadend = function() {
+                const audioBase64 = reader.result.split(',')[1];
+
+                // Create a hidden input to store the base64-encoded audio for form submission
+                const audioInput = document.createElement('input');
+                audioInput.type = 'hidden';
+                audioInput.name = 'audio_base64';
+                audioInput.value = audioBase64;
+                previewContainer.appendChild(audioInput);
+            };
+        };
+    });
 
     // Image input event listener
     document.getElementById('imageInput').addEventListener('change', function() {
         const previewContainer = document.getElementById('previewContainer');
 
         if (this.files && this.files[0]) {
-            previewContainer.appendChild(showImagePreview(this.files[0]));
+            const imgPreview = document.createElement('img');
+            imgPreview.src = URL.createObjectURL(this.files[0]);
+            imgPreview.className = 'w-20 rounded-lg mb-2'; // Add margin to separate from audio preview
+            previewContainer.appendChild(imgPreview);
         }
     });
+</script>
+<script>
+    function confirmDelete(event) {
+        event.preventDefault(); // Prevent the default behavior of the form submission
 
-    // Audio input event listener
-    document.getElementById('audioInput').addEventListener('change', function() {
-        const previewContainer = document.getElementById('previewContainer');
-
-        if (this.files && this.files[0]) {
-            previewContainer.appendChild(showAudioPreview(this.files[0]));
-        }
-    });
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If the user confirms, submit the form
+                event.target.submit();
+            }
+        });
+    }
 </script>
 
 @endsection
