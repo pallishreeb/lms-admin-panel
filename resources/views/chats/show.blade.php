@@ -104,6 +104,7 @@
 </div>
 
 <!-- JavaScript for handling image and audio previews -->
+
 <script>
     let mediaRecorder;
     let audioChunks = [];
@@ -130,63 +131,78 @@
         timerDisplay.textContent = '';
     }
 
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-        mediaRecorder = new MediaRecorder(stream);
+    async function startRecording() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
 
-        recordButton.addEventListener('click', () => {
-            if (!recording) {
-                // Start recording
-                recording = true;
-                audioChunks = [];
-                mediaRecorder.start();
-                startTimer();
-            } else {
-                // Stop recording
-                recording = false;
-                mediaRecorder.stop();
-                stopTimer();
-            }
-        });
+            recording = true;
+            audioChunks = [];
+            mediaRecorder.start();
+            startTimer();
 
-        mediaRecorder.ondataavailable = event => {
-            audioChunks.push(event.data);
-        };
-
-        mediaRecorder.onstop = () => {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
-            const audioUrl = URL.createObjectURL(audioBlob);
-            const audio = document.createElement('audio');
-            audio.src = audioUrl;
-            audio.controls = true;
-
-            // Clear the previous preview and append the new one
-            previewContainer.innerHTML = '';
-            previewContainer.appendChild(audio);
-
-            // Create a delete button
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Delete';
-            deleteButton.innerHTML='<i class="fas fa-trash"></i>'
-            deleteButton.className = 'ml-4 mt-2 mb-2 bg-red-500 text-white px-2 py-1 rounded';
-            deleteButton.addEventListener('click', () => {
-                previewContainer.innerHTML = '';
-            });
-            previewContainer.appendChild(deleteButton);
-
-            // Append the Blob data into a form hidden input as a base64 string
-            const reader = new FileReader();
-            reader.readAsDataURL(audioBlob);
-            reader.onloadend = function() {
-                const audioBase64 = reader.result.split(',')[1];
-
-                // Create a hidden input to store the base64-encoded audio for form submission
-                const audioInput = document.createElement('input');
-                audioInput.type = 'hidden';
-                audioInput.name = 'audio_base64';
-                audioInput.value = audioBase64;
-                previewContainer.appendChild(audioInput);
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
             };
-        };
+
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audio = document.createElement('audio');
+                audio.src = audioUrl;
+                audio.controls = true;
+
+                // Clear the previous preview and append the new one
+                previewContainer.innerHTML = '';
+                previewContainer.appendChild(audio);
+
+                // Create a delete button
+                const deleteButton = document.createElement('button');
+                deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+                deleteButton.className = 'ml-4 mt-2 mb-2 bg-red-500 text-white px-2 py-1 rounded';
+                deleteButton.addEventListener('click', () => {
+                    previewContainer.innerHTML = '';
+                });
+                previewContainer.appendChild(deleteButton);
+
+                // Append the Blob data into a form hidden input as a base64 string
+                const reader = new FileReader();
+                reader.readAsDataURL(audioBlob);
+                reader.onloadend = function() {
+                    const audioBase64 = reader.result.split(',')[1];
+
+                    // Create a hidden input to store the base64-encoded audio for form submission
+                    const audioInput = document.createElement('input');
+                    audioInput.type = 'hidden';
+                    audioInput.name = 'audio_base64';
+                    audioInput.value = audioBase64;
+                    previewContainer.appendChild(audioInput);
+                };
+            };
+
+        } catch (error) {
+            console.error('Error accessing microphone:', error);
+            if (error.name === 'NotAllowedError') {
+                alert('Microphone access is denied. Please check your browser settings to allow microphone access.');
+                // Provide specific instructions based on common browsers
+                alert('Instructions:\n1. Click on the lock icon in the address bar.\n2. Find the "Microphone" permission.\n3. Change it to "Allow" and refresh the page.');
+            } else if (error.name === 'NotFoundError') {
+                alert('No microphone found. Please connect a microphone and try again.');
+            } else {
+                alert('An unexpected error occurred: ' + error.message);
+            }
+        }
+    }
+
+    recordButton.addEventListener('click', () => {
+        if (!recording) {
+            startRecording();
+        } else {
+            // Stop recording
+            recording = false;
+            mediaRecorder.stop();
+            stopTimer();
+        }
     });
 
     // Image input event listener
@@ -201,6 +217,8 @@
         }
     });
 </script>
+
+
 <script>
     function confirmDelete(event) {
         event.preventDefault(); // Prevent the default behavior of the form submission
@@ -220,6 +238,6 @@
             }
         });
     }
-</script>
+</scrip>
 
 @endsection
